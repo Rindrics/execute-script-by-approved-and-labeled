@@ -1,2 +1,3 @@
-# execute-script-by-approved-and-labeled
-Execute shell script only when the PR is approved and labelled
+# execute-script-with-merge
+
+Execute shell script safely: only when the pull request is labeled and merged into the specified branch
