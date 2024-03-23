@@ -8,3 +8,48 @@
 
 // Package application is a generated GoMock package.
 package application
+
+import (
+	reflect "reflect"
+
+	application "github.com/Rindrics/execute-script-with-merge/application"
+	domain "github.com/Rindrics/execute-script-with-merge/domain"
+	gomock "go.uber.org/mock/gomock"
+)
+
+// MockShellInvoker is a mock of ShellInvoker interface.
+type MockShellInvoker struct {
+	ctrl     *gomock.Controller
+	recorder *MockShellInvokerMockRecorder
+}
+
+// MockShellInvokerMockRecorder is the mock recorder for MockShellInvoker.
+type MockShellInvokerMockRecorder struct {
+	mock *MockShellInvoker
+}
+
+// NewMockShellInvoker creates a new mock instance.
+func NewMockShellInvoker(ctrl *gomock.Controller) *MockShellInvoker {
+	mock := &MockShellInvoker{ctrl: ctrl}
+	mock.recorder = &MockShellInvokerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockShellInvoker) EXPECT() *MockShellInvokerMockRecorder {
+	return m.recorder
+}
+
+// Execute mocks base method.
+func (m *MockShellInvoker) Execute(arg0 application.Config, arg1 domain.ExecutionDirectiveList) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockShellInvokerMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockShellInvoker)(nil).Execute), arg0, arg1)
+}
