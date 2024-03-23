@@ -22,4 +22,5 @@ func TestParsePullRequestEvent(t *testing.T) {
 		_, err := infrastructure.ParsePullRequestEvent()
 		assert.Error(t, err)
 	})
+	os.Unsetenv("GITHUB_EVENT_PATH")
 }
