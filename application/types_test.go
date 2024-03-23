@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	"github.com/Rindrics/execute-script-with-merge/domain"
+	mock "github.com/Rindrics/execute-script-with-merge/domain/mock"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestAppHasRequiredLabel(t *testing.T) {
-	app := New("required-label", "main")
+	app := New("required-label", "main", nil)
 
 	t.Run("HasRequiredLabel", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -26,7 +28,7 @@ func TestAppHasRequiredLabel(t *testing.T) {
 }
 
 func TestAppIsDefaultBranch(t *testing.T) {
-	app := New("required-label", "main")
+	app := New("required-label", "main", nil)
 
 	t.Run("IsDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -43,7 +45,7 @@ func TestAppIsDefaultBranch(t *testing.T) {
 }
 
 func TestAppIsValid(t *testing.T) {
-	app := New("required-label", "main")
+	app := New("required-label", "main", nil)
 
 	t.Run("Valid", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -65,5 +67,22 @@ func TestAppIsValid(t *testing.T) {
 			Labels: domain.Labels{"required-label"},
 		}
 		assert.False(t, app.IsValid(event))
+	})
+}
+
+func TestAppLoadExecutionDirectiveList(t *testing.T) {
+	expectedDirectives := []domain.ExecutionDirective{"foo.sh", "bar.sh"}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockParser := mock.NewMockEventParser(ctrl)
+	mockParser.EXPECT().ParseExecutionDirectives().Return(expectedDirectives, nil).Times(1)
+
+	app := New("required-label", "main", mockParser)
+
+	t.Run("LoadExecutionDirectiveList", func(t *testing.T) {
+		err := app.LoadExecutionDirectiveList()
+		assert.Nil(t, err)
+		assert.Equal(t, expectedDirectives, app.ExecutionDirectiveList.ExecutionDirectives,
+			"The execution directives should match the expected values.")
 	})
 }
