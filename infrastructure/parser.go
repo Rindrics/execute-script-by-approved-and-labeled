@@ -11,7 +11,7 @@ import (
 
 type EventParser struct{}
 
-func ParseGitHubEvent() (*github.PullRequestEvent, error) {
+func ParsePullRequestEvent() (*github.PullRequestEvent, error) {
 	eventPath := os.Getenv("GITHUB_EVENT_PATH")
 	if eventPath == "" {
 		return nil, fmt.Errorf("GITHUB_EVENT_PATH environment variable not set")
@@ -28,7 +28,7 @@ func ParseGitHubEvent() (*github.PullRequestEvent, error) {
 		return nil, err
 	}
 
-	// Judge the type of the event
+	// Return if pull_request event
 	if _, ok := genericData["pull_request"]; ok {
 		var event github.PullRequestEvent
 		if err := json.Unmarshal(data, &event); err != nil {
@@ -36,6 +36,6 @@ func ParseGitHubEvent() (*github.PullRequestEvent, error) {
 		}
 		return &event, nil
 	} else {
-		return nil, fmt.Errorf("unsupported or unknown event type in the provided data")
+		return nil, fmt.Errorf("unknown event type")
 	}
 }
