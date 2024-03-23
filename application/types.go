@@ -1,6 +1,8 @@
 package application
 
-import "github.com/Rindrics/execute-script-with-merge/domain"
+import (
+	"github.com/Rindrics/execute-script-with-merge/domain"
+)
 
 type Config struct {
 	RquiredLabel              string
@@ -52,4 +54,12 @@ func (a *App) LoadExecutionDirectiveList() error {
 	}
 
 	return nil
+}
+
+type ShellInvoker interface {
+	Execute(Config, domain.ExecutionDirectiveList) error
+}
+
+func (a *App) Run(invoker ShellInvoker) error {
+	return invoker.Execute(a.Config, a.ExecutionDirectiveList)
 }
