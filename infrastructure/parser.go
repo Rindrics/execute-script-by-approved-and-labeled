@@ -6,12 +6,14 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/Rindrics/execute-script-with-merge/application"
+	"github.com/Rindrics/execute-script-with-merge/domain"
 	"github.com/google/go-github/github"
 )
 
 type EventParser struct{}
 
-func ParsePullRequestEvent() (*github.PullRequestEvent, error) {
+func parsePullRequestEvent() (*github.PullRequestEvent, error) {
 	eventPath := os.Getenv("GITHUB_EVENT_PATH")
 	if eventPath == "" {
 		return nil, fmt.Errorf("GITHUB_EVENT_PATH environment variable not set")
@@ -38,4 +40,21 @@ func ParsePullRequestEvent() (*github.PullRequestEvent, error) {
 	} else {
 		return nil, fmt.Errorf("unknown event type")
 	}
+}
+
+func ParseEvent(application.Config) (domain.ParsedEvent, error) {
+	event, err := parsePullRequestEvent()
+	if err != nil {
+		return domain.ParsedEvent{}, err
+	}
+	var labels domain.Labels
+	for _, label := range event.PullRequest.Labels {
+		labels = append(labels, *label.Name)
+	}
+
+	return domain.ParsedEvent{
+		Branch: *event.PullRequest.Head.Ref,
+		Labels: labels,
+	}, nil
+
 }

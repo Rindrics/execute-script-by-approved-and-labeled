@@ -28,6 +28,10 @@ func New(requiredLabel, defaultBranch string, parser domain.EventParser, logger 
 	}
 }
 
+func (a *App) ParseEvent() (domain.ParsedEvent, error) {
+	return a.Parser.ParseEvent()
+}
+
 func (a *App) IsValid(event domain.ParsedEvent) bool {
 	if a.HasRequiredLabel(event) && a.IsDefaultBranch(event) {
 		return true

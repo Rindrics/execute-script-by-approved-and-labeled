@@ -7,12 +7,27 @@ import (
 	amock "github.com/Rindrics/execute-script-with-merge/application/mock"
 	"github.com/Rindrics/execute-script-with-merge/domain"
 	dmock "github.com/Rindrics/execute-script-with-merge/domain/mock"
+	"github.com/Rindrics/execute-script-with-merge/infrastructure"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
 
+func createApp(t *testing.T, parser domain.EventParser) *application.App {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	if parser == nil {
+		parser = dmock.NewMockEventParser(ctrl)
+	}
+	logger := infrastructure.NewLogger("info")
+
+	app := application.New("required-label", "main", parser, logger)
+
+	return app
+}
+
 func TestAppHasRequiredLabel(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
 
 	t.Run("HasRequiredLabel", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -30,7 +45,7 @@ func TestAppHasRequiredLabel(t *testing.T) {
 }
 
 func TestAppIsDefaultBranch(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
 
 	t.Run("IsDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -47,7 +62,7 @@ func TestAppIsDefaultBranch(t *testing.T) {
 }
 
 func TestAppIsValid(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
 
 	t.Run("Valid", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -79,7 +94,7 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 	mockParser := dmock.NewMockEventParser(ctrl)
 	mockParser.EXPECT().ParseExecutionDirectives().Return(expectedDirectives, nil).Times(1)
 
-	app := application.New("required-label", "main", mockParser)
+	app := createApp(t, mockParser)
 
 	t.Run("LoadExecutionDirectiveList", func(t *testing.T) {
 		err := app.LoadExecutionDirectiveList()
@@ -90,7 +105,8 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 }
 
 func TestAppRun(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
+
 	app.ExecutionDirectiveList = domain.ExecutionDirectiveList{
 		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
 	}

@@ -40,11 +40,12 @@ func (m *MockEventParser) EXPECT() *MockEventParserMockRecorder {
 }
 
 // ParseEvent mocks base method.
-func (m *MockEventParser) ParseEvent() domain.ParsedEvent {
+func (m *MockEventParser) ParseEvent() (domain.ParsedEvent, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEvent")
 	ret0, _ := ret[0].(domain.ParsedEvent)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // ParseEvent indicates an expected call of ParseEvent.
