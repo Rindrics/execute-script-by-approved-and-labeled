@@ -14,15 +14,17 @@ type App struct {
 	Config                 Config
 	ExecutionDirectiveList domain.ExecutionDirectiveList
 	Parser                 domain.EventParser
+	Logger                 Logger
 }
 
-func New(requiredLabel, defaultBranch string, parser domain.EventParser) *App {
+func New(requiredLabel, defaultBranch string, parser domain.EventParser, logger Logger) *App {
 	return &App{
 		Config: Config{
 			RquiredLabel:  requiredLabel,
 			DefaultBranch: defaultBranch,
 		},
 		Parser: parser,
+		Logger: logger,
 	}
 }
 
@@ -62,4 +64,10 @@ type ShellInvoker interface {
 
 func (a *App) Run(invoker ShellInvoker) error {
 	return invoker.Execute(a.Config, a.ExecutionDirectiveList)
+}
+
+type Logger interface {
+	Debug(string, ...any)
+	Info(string, ...any)
+	Error(string, ...any)
 }
