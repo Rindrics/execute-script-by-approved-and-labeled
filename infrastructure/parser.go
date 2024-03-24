@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/Rindrics/execute-script-with-merge/application"
 	"github.com/Rindrics/execute-script-with-merge/domain"
 	"github.com/google/go-github/github"
 )
@@ -42,7 +41,7 @@ func parsePullRequestEvent() (*github.PullRequestEvent, error) {
 	}
 }
 
-func ParseEvent(application.Config) (domain.ParsedEvent, error) {
+func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
 	event, err := parsePullRequestEvent()
 	if err != nil {
 		return domain.ParsedEvent{}, err
@@ -57,4 +56,8 @@ func ParseEvent(application.Config) (domain.ParsedEvent, error) {
 		Labels: labels,
 	}, nil
 
+}
+
+func (e EventParser) ParseExecutionDirectives() ([]domain.ExecutionDirective, error) {
+	return []domain.ExecutionDirective{}, nil
 }

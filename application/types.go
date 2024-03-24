@@ -18,6 +18,7 @@ type App struct {
 }
 
 func New(requiredLabel, defaultBranch string, parser domain.EventParser, logger Logger) *App {
+	logger.Debug("application.New", "requiredLabel:", requiredLabel, "defaultBranch", defaultBranch)
 	return &App{
 		Config: Config{
 			RquiredLabel:  requiredLabel,

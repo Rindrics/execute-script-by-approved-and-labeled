@@ -1,6 +1,8 @@
 package domain
 
-import "log/slog"
+import (
+	"log/slog"
+)
 
 type Labels []string
 
@@ -37,6 +39,6 @@ func (e *ExecutionDirectiveList) LoadExecutionDirectives(parser EventParser) err
 type ExecutionDirective string
 
 type EventParser interface {
-	ParseEvent() ParsedEvent
+	ParseEvent() (ParsedEvent, error)
 	ParseExecutionDirectives() ([]ExecutionDirective, error)
 }
