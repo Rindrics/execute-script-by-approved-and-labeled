@@ -12,3 +12,7 @@ test:
 mock:
 	mockgen -source=domain/types.go -destination=./domain/mock/types_mock.go -package=domain
 	mockgen -source=application/types.go -destination=./application/mock/types_mock.go -package=application
+
+.PHONY: run
+run:
+	go run main.go
