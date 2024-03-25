@@ -6,6 +6,20 @@
     "url": "https://api.github.com/repos/octocat/Hello-World/pulls/1",
     "title": "Amazing new feature",
     "body": "Please pull these awesome changes",
+    "head": {
+      "ref": "topic"
+    },
+    "base": {
+      "ref": "main"
+    },
+    "labels": [
+      {
+        "name": "bug"
+      },
+      {
+        "name": "test-label"
+      }
+    ],
     "user": {
       "login": "octocat",
       "id": 1,

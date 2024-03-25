@@ -4,13 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log/slog"
 	"os"
 
 	"github.com/Rindrics/execute-script-with-merge/domain"
 	"github.com/google/go-github/github"
 )
 
-type EventParser struct{}
+type EventParser struct {
+	Logger *slog.Logger
+}
 
 func parsePullRequestEvent() (*github.PullRequestEvent, error) {
 	eventPath := os.Getenv("GITHUB_EVENT_PATH")
@@ -42,17 +45,21 @@ func parsePullRequestEvent() (*github.PullRequestEvent, error) {
 }
 
 func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
+	e.Logger.Debug("infrastructure.ParseEvent", "EventParser", e)
+
 	event, err := parsePullRequestEvent()
 	if err != nil {
 		return domain.ParsedEvent{}, err
 	}
+	e.Logger.Debug("infrastructure.ParseEvent", "event:", event)
 	var labels domain.Labels
 	for _, label := range event.PullRequest.Labels {
 		labels = append(labels, *label.Name)
 	}
+	e.Logger.Debug("infrastructure.ParseEvent", "labels:", labels)
 
 	return domain.ParsedEvent{
-		Branch: *event.PullRequest.Head.Ref,
+		Branch: *event.PullRequest.Base.Ref,
 		Labels: labels,
 	}, nil
 

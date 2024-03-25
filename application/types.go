@@ -30,6 +30,7 @@ func New(requiredLabel, defaultBranch string, parser domain.EventParser, logger 
 }
 
 func (a *App) ParseEvent() (domain.ParsedEvent, error) {
+	a.Logger.Debug("application.ParseEvent", "*App:", a)
 	return a.Parser.ParseEvent()
 }
 
