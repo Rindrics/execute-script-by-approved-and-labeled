@@ -49,7 +49,7 @@ func (a *App) HasRequiredLabel(event domain.ParsedEvent) bool {
 }
 
 func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
-	if event.Branch == a.Config.DefaultBranch {
+	if event.Branches.Base == a.Config.DefaultBranch {
 		return true
 	}
 	return false

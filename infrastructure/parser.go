@@ -59,7 +59,10 @@ func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
 	e.Logger.Debug("infrastructure.ParseEvent", "labels:", labels)
 
 	return domain.ParsedEvent{
-		Branch: *event.PullRequest.Base.Ref,
+		Branches: domain.Branches{
+			Head: *event.PullRequest.Head.Ref,
+			Base: *event.PullRequest.Base.Ref,
+		},
 		Labels: labels,
 	}, nil
 

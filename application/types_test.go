@@ -49,13 +49,17 @@ func TestAppIsDefaultBranch(t *testing.T) {
 
 	t.Run("IsDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "main",
+			Branches: domain.Branches{
+				Base: "main",
+			},
 		}
 		assert.True(t, app.IsDefaultBranch(event))
 	})
 	t.Run("NotIsDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "other-branch",
+			Branches: domain.Branches{
+				Base: "other-branhh",
+			},
 		}
 		assert.False(t, app.IsDefaultBranch(event))
 	})
@@ -66,21 +70,27 @@ func TestAppIsValid(t *testing.T) {
 
 	t.Run("Valid", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "main",
+			Branches: domain.Branches{
+				Base: "main",
+			},
 			Labels: domain.Labels{"required-label"},
 		}
 		assert.True(t, app.IsValid(event))
 	})
 	t.Run("NoLabel", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "main",
+			Branches: domain.Branches{
+				Base: "main",
+			},
 			Labels: domain.Labels{},
 		}
 		assert.False(t, app.IsValid(event))
 	})
 	t.Run("NotDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "other-branch",
+			Branches: domain.Branches{
+				Base: "other-branhh",
+			},
 			Labels: domain.Labels{"required-label"},
 		}
 		assert.False(t, app.IsValid(event))
