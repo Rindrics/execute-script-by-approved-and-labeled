@@ -102,12 +102,12 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockParser := dmock.NewMockEventParser(ctrl)
-	mockParser.EXPECT().ParseExecutionDirectives().Return(expectedDirectives, nil).Times(1)
+	mockParser.EXPECT().ParseExecutionDirectives(domain.ParsedEvent{}, "").Return(expectedDirectives, nil).Times(1)
 
 	app := createApp(t, mockParser)
 
 	t.Run("LoadExecutionDirectiveList", func(t *testing.T) {
-		err := app.LoadExecutionDirectiveList()
+		err := app.LoadExecutionDirectiveList(domain.ParsedEvent{})
 		assert.Nil(t, err)
 		assert.Equal(t, expectedDirectives, app.ExecutionDirectiveList.ExecutionDirectives,
 			"The execution directives should match the expected values.")

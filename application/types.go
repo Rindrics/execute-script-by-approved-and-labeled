@@ -55,9 +55,9 @@ func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
 	return false
 }
 
-func (a *App) LoadExecutionDirectiveList() error {
+func (a *App) LoadExecutionDirectiveList(event domain.ParsedEvent) error {
 	a.ExecutionDirectiveList.Directory = a.Config.ExecutionDirectiveListDir
-	if err := a.ExecutionDirectiveList.LoadExecutionDirectives(a.Parser); err != nil {
+	if err := a.ExecutionDirectiveList.LoadExecutionDirectives(a.Parser, event, a.Config.ExecutionDirectiveListDir); err != nil {
 		return err
 	}
 

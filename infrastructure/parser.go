@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"log/slog"
 	"os"
+	"os/exec"
 
 	"github.com/Rindrics/execute-script-with-merge/domain"
 	"github.com/google/go-github/github"
+	"github.com/waigani/diffparser"
 )
 
 type EventParser struct {
@@ -65,9 +68,66 @@ func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
 		},
 		Labels: labels,
 	}, nil
-
 }
 
-func (e EventParser) ParseExecutionDirectives() ([]domain.ExecutionDirective, error) {
-	return []domain.ExecutionDirective{}, nil
+func (e EventParser) ParseExecutionDirectives(pe domain.ParsedEvent, edlPath string) ([]domain.ExecutionDirective, error) {
+	e.Logger.Debug("infrastructure.ParseExecutionDirectives", "head", pe.Branches.Head, "base", pe.Branches.Base)
+	diff, err := getGitDiff(pe.Branches.Base, pe.Branches.Head, edlPath, e.Logger)
+	if err != nil {
+		return []domain.ExecutionDirective{}, err
+	}
+	ed := parseExecutionDirectivesFromGitDiff(diff, e.Logger)
+	e.Logger.Info("infrastructure.ParseExecutionDirectives", "ExecutionDirectives", ed)
+
+	return ed, nil
+}
+
+func getGitDiff(base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
+	// TODO:
+	// - define application.Config.ExecutionDirectiveListDir as new type
+	// - define Validate() to check whether it exists in git index
+	cmd := exec.Command("git", "diff", "--no-color", base+"..."+head, "--", targetFile)
+	logger.Debug("infrastructure.getGitDiff", "cmd", cmd.String())
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+		return &diffparser.Diff{}, err
+	}
+
+	err = cmd.Start()
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "cmd.Start() failed with", err)
+		return &diffparser.Diff{}, err
+	}
+
+	output, err := ioutil.ReadAll(stdout)
+	logger.Debug("infrastructure.getGitDiff", "output", string(output))
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "ReadAll failed with", err)
+		return &diffparser.Diff{}, err
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "cmd.Run() failed with", err)
+		return &diffparser.Diff{}, err
+	}
+
+	return diffparser.Parse(string(output))
+}
+
+func parseExecutionDirectivesFromGitDiff(diff *diffparser.Diff, logger *slog.Logger) []domain.ExecutionDirective {
+	executionDirectives := []domain.ExecutionDirective{}
+
+	for _, file := range diff.Files {
+		logger.Debug("infrastructure.parseExecutionDirectivesFromGitDiff", "file", file)
+		for _, hunk := range file.Hunks {
+			for _, line := range hunk.NewRange.Lines {
+				logger.Debug("infrastructure.parseExecutionDirectivesFromGitDiff", "line", line)
+				executionDirectives = append(executionDirectives, domain.ExecutionDirective(line.Content))
+			}
+		}
+	}
+	logger.Info("infrastructure.parseExecutionDirectivesFromGitDiff", "executionDirectives", executionDirectives)
+	return executionDirectives
 }

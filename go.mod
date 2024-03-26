@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/stretchr/testify v1.9.0
+	github.com/waigani/diffparser v0.0.0-20190828052634-7391f219313d
 	go.uber.org/mock v0.4.0
 )
 

@@ -30,8 +30,8 @@ type ExecutionDirectiveList struct {
 	Directory           string
 }
 
-func (e *ExecutionDirectiveList) LoadExecutionDirectives(parser EventParser) error {
-	executionDirectives, err := parser.ParseExecutionDirectives()
+func (e *ExecutionDirectiveList) LoadExecutionDirectives(parser EventParser, event ParsedEvent, edlPath string) error {
+	executionDirectives, err := parser.ParseExecutionDirectives(event, edlPath)
 	if err != nil {
 		return err
 	}
@@ -45,5 +45,5 @@ type ExecutionDirective string
 
 type EventParser interface {
 	ParseEvent() (ParsedEvent, error)
-	ParseExecutionDirectives() ([]ExecutionDirective, error)
+	ParseExecutionDirectives(ParsedEvent, string) ([]ExecutionDirective, error)
 }
