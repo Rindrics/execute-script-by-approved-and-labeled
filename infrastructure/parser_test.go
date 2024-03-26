@@ -36,8 +36,8 @@ func TestParsePullRequestEvent(t *testing.T) {
 func TestParseExecutionDirectives(t *testing.T) {
 	pe := domain.ParsedEvent{
 		Branches: domain.Branches{
-			Base: "main",
-			Head: "branch-for-test",
+			Base: "origin/main",
+			Head: "origin/branch-for-test",
 		},
 	}
 
@@ -52,7 +52,7 @@ func TestParseExecutionDirectives(t *testing.T) {
 }
 
 func TestGetGitDiff(t *testing.T) {
-	diff, err := getGitDiff("main", "branch-for-test", "assets/execution_directive_list.txt", NewLogger())
+	diff, err := getGitDiff("origin/main", "origin/branch-for-test", "assets/execution_directive_list.txt", NewLogger())
 	if err != nil {
 		t.Fatal(err)
 	}
