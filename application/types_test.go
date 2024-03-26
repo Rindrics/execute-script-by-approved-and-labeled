@@ -108,7 +108,7 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockParser := dmock.NewMockEventParser(ctrl)
-	mockParser.EXPECT().ParseExecutionDirectives(domain.ParsedEvent{}, "").Return(expectedDirectives, nil).Times(1)
+	mockParser.EXPECT().ParseExecutionDirectives(domain.ParsedEvent{}, "../infrastructure/assets/").Return(expectedDirectives, nil).Times(1)
 
 	app := createApp(t, mockParser)
 
