@@ -10,12 +10,14 @@ func main() {
 
 	logger.Info("starting application")
 
+	// TODO: load config from environment variables
 	config := application.Config{
 		RequiredLabel:             "test-label",
 		DefaultBranch:             "main",
 		ExecutionDirectiveListDir: "infrastructure/assets/",
 	}
 
+	// TODO: remove EventParser from argument
 	app := application.New(config, infrastructure.EventParser{}, logger)
 	logger.Debug("main", "app:", app)
 
@@ -25,6 +27,7 @@ func main() {
 		return
 	}
 
+	// TODO: add label existence to validation
 	if app.IsValid(event) {
 		app.LoadExecutionDirectiveList(event)
 		logger.Debug("main", "app.ExecutionDirectiveList", app.ExecutionDirectiveList)
