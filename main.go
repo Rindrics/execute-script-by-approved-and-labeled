@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	logger := infrastructure.NewLogger("debug")
+	logger := infrastructure.NewLogger()
 
 	logger.Info("starting application")
 

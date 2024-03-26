@@ -6,9 +6,11 @@ import (
 	"log/slog"
 )
 
-func NewLogger(loglevel string) *slog.Logger {
+func NewLogger() *slog.Logger {
+	l := os.Getenv("LOG_LEVEL")
+
 	var ll slog.Level
-	switch loglevel {
+	switch l {
 	case "debug":
 		ll = slog.LevelDebug
 	case "info":

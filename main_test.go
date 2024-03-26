@@ -12,7 +12,7 @@ import (
 func TestMainValidEvent(t *testing.T) {
 	os.Setenv("GITHUB_EVENT_PATH", "./infrastructure/pull_request.json")
 
-	logger := infrastructure.NewLogger("debug")
+	logger := infrastructure.NewLogger()
 	app := application.New("test-label", "main", infrastructure.EventParser{logger}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 

@@ -19,7 +19,7 @@ func createApp(t *testing.T, parser domain.EventParser) *application.App {
 	if parser == nil {
 		parser = dmock.NewMockEventParser(ctrl)
 	}
-	logger := infrastructure.NewLogger("info")
+	logger := infrastructure.NewLogger()
 
 	app := application.New("required-label", "main", parser, logger)
 
