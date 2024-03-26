@@ -18,5 +18,9 @@ jobs:
         with:
           go-version: "1.22.1"
 
+      - name: Run git diff directly
+        run: |
+          /usr/bin/git diff --no-color main...branch-for-test -- assets/execution_directive_list.txt
+
       - name: Test
         run: make test LOG_LEVEL=debug
