@@ -10,6 +10,12 @@ func main() {
 
 	logger.Info("starting application")
 
-	app := application.New("test-label", "main", infrastructure.EventParser{}, logger)
+	config := application.Config{
+		RequiredLabel:             "test-label",
+		DefaultBranch:             "main",
+		ExecutionDirectiveListDir: "infrastructure/assets/",
+	}
+
+	app := application.New(config, infrastructure.EventParser{}, logger)
 	logger.Debug("main", "app:", app)
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type Config struct {
-	RquiredLabel              string
+	RequiredLabel             string
 	DefaultBranch             string
 	ExecutionDirectiveListDir string
 }
@@ -17,13 +17,10 @@ type App struct {
 	Logger                 Logger
 }
 
-func New(requiredLabel, defaultBranch string, parser domain.EventParser, logger Logger) *App {
-	logger.Debug("application.New", "requiredLabel:", requiredLabel, "defaultBranch", defaultBranch)
+func New(config Config, parser domain.EventParser, logger Logger) *App {
+	logger.Debug("application.New", "config", config)
 	return &App{
-		Config: Config{
-			RquiredLabel:  requiredLabel,
-			DefaultBranch: defaultBranch,
-		},
+		Config: config,
 		Parser: parser,
 		Logger: logger,
 	}
@@ -42,7 +39,7 @@ func (a *App) IsValid(event domain.ParsedEvent) bool {
 }
 
 func (a *App) HasRequiredLabel(event domain.ParsedEvent) bool {
-	if event.Labels.Contains(a.Config.RquiredLabel) {
+	if event.Labels.Contains(a.Config.RequiredLabel) {
 		return true
 	}
 	return false

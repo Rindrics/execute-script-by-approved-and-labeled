@@ -21,7 +21,13 @@ func createApp(t *testing.T, parser domain.EventParser) *application.App {
 	}
 	logger := infrastructure.NewLogger()
 
-	app := application.New("required-label", "main", parser, logger)
+	config := application.Config{
+		RequiredLabel:             "required-label",
+		DefaultBranch:             "main",
+		ExecutionDirectiveListDir: "../infrastructure/assets/",
+	}
+
+	app := application.New(config, parser, logger)
 
 	return app
 }
