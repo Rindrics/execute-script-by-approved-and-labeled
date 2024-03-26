@@ -27,6 +27,8 @@ func main() {
 
 	if app.IsValid(event) {
 		logger.Info("run script")
+		app.LoadExecutionDirectiveList(event)
+		logger.Debug("main", "app.ExecutionDirectiveList", app.ExecutionDirectiveList)
 	} else {
 		logger.Info("exit because event did not meet requirements")
 	}
