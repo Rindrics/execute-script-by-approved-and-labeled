@@ -21,6 +21,9 @@ func New(config Config, parser domain.EventParser, logger Logger) *App {
 	logger.Debug("application.New", "config", config)
 	return &App{
 		Config: config,
+		ExecutionDirectiveList: domain.ExecutionDirectiveList{
+			Directory: config.ExecutionDirectiveListDir,
+		},
 		Parser: parser,
 		Logger: logger,
 	}
