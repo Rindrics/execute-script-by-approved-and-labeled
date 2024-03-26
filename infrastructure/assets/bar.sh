@@ -1,1 +1,1 @@
-echo foo
+echo "goodbye from bar.sh!!!"
