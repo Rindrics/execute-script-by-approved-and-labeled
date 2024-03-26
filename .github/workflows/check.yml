@@ -2,7 +2,6 @@ name: Check Application
 
 on:
   - push
-  - workflow_dispatch
 
 jobs:
   check:
@@ -18,10 +17,6 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.22.1"
-
-      - name: Run git diff directly
-        run: |
-          /usr/bin/git diff --no-color origin/main..origin/branch-for-test -- infrastructure/assets/execution_directive_list.txt
 
       - name: Test
         run: make test LOG_LEVEL=debug
