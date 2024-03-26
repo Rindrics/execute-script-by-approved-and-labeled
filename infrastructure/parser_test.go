@@ -37,7 +37,7 @@ func TestParseExecutionDirectives(t *testing.T) {
 	pe := domain.ParsedEvent{
 		Branches: domain.Branches{
 			Base: "main",
-			Head: "issue-3-infrastructure",
+			Head: "branch-for-test",
 		},
 	}
 
@@ -47,12 +47,12 @@ func TestParseExecutionDirectives(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.NotNil(t, ed)
-	assert.Equal(t, domain.ExecutionDirective("foo.sh"), ed[0])
-	assert.Equal(t, domain.ExecutionDirective("bar.sh"), ed[1])
+	assert.Equal(t, domain.ExecutionDirective("for_test.sh"), ed[3])
+	assert.Equal(t, domain.ExecutionDirective("for_test2.sh"), ed[4])
 }
 
 func TestGetGitDiff(t *testing.T) {
-	diff, err := getGitDiff("main", "issue-3-infrastructure", "assets/execution_directive_list.txt", NewLogger())
+	diff, err := getGitDiff("main", "branch-for-test", "assets/execution_directive_list.txt", NewLogger())
 	if err != nil {
 		t.Fatal(err)
 	}
