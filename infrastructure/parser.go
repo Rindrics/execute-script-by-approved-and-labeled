@@ -86,7 +86,7 @@ func getGitDiff(base, head, targetFile string, logger *slog.Logger) (*diffparser
 	// TODO:
 	// - define application.Config.ExecutionDirectiveListDir as new type
 	// - define Validate() to check whether it exists in git index
-	cmd := exec.Command("git", "diff", "--no-color", base+"..."+head, "--", targetFile)
+	cmd := exec.Command("git", "diff", "--no-color", base+".."+head, "--", targetFile)
 	logger.Debug("infrastructure.getGitDiff", "cmd", cmd.String())
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
