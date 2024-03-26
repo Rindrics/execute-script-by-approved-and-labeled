@@ -18,4 +18,16 @@ func main() {
 
 	app := application.New(config, infrastructure.EventParser{}, logger)
 	logger.Debug("main", "app:", app)
+
+	event, err := app.ParseEvent()
+	if err != nil {
+		logger.Error("failed to parse event", "error", err)
+		return
+	}
+
+	if app.IsValid(event) {
+		logger.Info("run script")
+	} else {
+		logger.Info("exit because event did not meet requirements")
+	}
 }
