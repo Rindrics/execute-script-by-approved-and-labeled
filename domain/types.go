@@ -1,7 +1,5 @@
 package domain
 
-import "log/slog"
-
 type Labels []string
 
 func (l Labels) Contains(label string) bool {
@@ -13,9 +11,14 @@ func (l Labels) Contains(label string) bool {
 	return false
 }
 
+type Branches struct {
+	Base string
+	Head string
+}
+
 type ParsedEvent struct {
-	Branch string
-	Labels Labels
+	Branches Branches
+	Labels   Labels
 }
 
 type ExecutionDirectiveList struct {
@@ -23,20 +26,9 @@ type ExecutionDirectiveList struct {
 	Directory           string
 }
 
-func (e *ExecutionDirectiveList) LoadExecutionDirectives(parser EventParser) error {
-	executionDirectives, err := parser.ParseExecutionDirectives()
-	if err != nil {
-		return err
-	}
-	slog.Info("ExecutionDirectiveList():", "executionDirectives", executionDirectives)
-	e.ExecutionDirectives = executionDirectives
-
-	return nil
-}
-
 type ExecutionDirective string
 
 type EventParser interface {
-	ParseEvent() ParsedEvent
-	ParseExecutionDirectives() ([]ExecutionDirective, error)
+	ParseEvent() (ParsedEvent, error)
+	ParseExecutionDirectives(ParsedEvent, string) ([]ExecutionDirective, error)
 }

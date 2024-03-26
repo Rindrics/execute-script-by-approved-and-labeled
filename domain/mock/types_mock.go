@@ -40,11 +40,12 @@ func (m *MockEventParser) EXPECT() *MockEventParserMockRecorder {
 }
 
 // ParseEvent mocks base method.
-func (m *MockEventParser) ParseEvent() domain.ParsedEvent {
+func (m *MockEventParser) ParseEvent() (domain.ParsedEvent, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEvent")
 	ret0, _ := ret[0].(domain.ParsedEvent)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // ParseEvent indicates an expected call of ParseEvent.
@@ -54,16 +55,16 @@ func (mr *MockEventParserMockRecorder) ParseEvent() *gomock.Call {
 }
 
 // ParseExecutionDirectives mocks base method.
-func (m *MockEventParser) ParseExecutionDirectives() ([]domain.ExecutionDirective, error) {
+func (m *MockEventParser) ParseExecutionDirectives(arg0 domain.ParsedEvent, arg1 string) ([]domain.ExecutionDirective, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseExecutionDirectives")
+	ret := m.ctrl.Call(m, "ParseExecutionDirectives", arg0, arg1)
 	ret0, _ := ret[0].([]domain.ExecutionDirective)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseExecutionDirectives indicates an expected call of ParseExecutionDirectives.
-func (mr *MockEventParserMockRecorder) ParseExecutionDirectives() *gomock.Call {
+func (mr *MockEventParserMockRecorder) ParseExecutionDirectives(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseExecutionDirectives", reflect.TypeOf((*MockEventParser)(nil).ParseExecutionDirectives))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseExecutionDirectives", reflect.TypeOf((*MockEventParser)(nil).ParseExecutionDirectives), arg0, arg1)
 }

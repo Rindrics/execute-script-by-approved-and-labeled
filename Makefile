@@ -4,9 +4,13 @@ LOG_LEVEL ?= info
 build:
 	go build -o dist/ ./...
 
+.PHONY: clean
+clean:
+	go clean -testcache
+
 .PHONY: test
 test:
-	@LOG_LEVEL=${LOG_LEVEL} go test -v ./...
+	@LOG_LEVEL=${LOG_LEVEL} go test -v ./... ${TESTFLAGS}
 
 .PHONY: mock
 mock:

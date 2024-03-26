@@ -7,12 +7,33 @@ import (
 	amock "github.com/Rindrics/execute-script-with-merge/application/mock"
 	"github.com/Rindrics/execute-script-with-merge/domain"
 	dmock "github.com/Rindrics/execute-script-with-merge/domain/mock"
+	"github.com/Rindrics/execute-script-with-merge/infrastructure"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
 
+func createApp(t *testing.T, parser domain.EventParser) *application.App {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	if parser == nil {
+		parser = dmock.NewMockEventParser(ctrl)
+	}
+	logger := infrastructure.NewLogger()
+
+	config := application.Config{
+		RequiredLabel:             "required-label",
+		DefaultBranch:             "main",
+		ExecutionDirectiveListDir: "../infrastructure/assets/",
+	}
+
+	app := application.New(config, parser, logger)
+
+	return app
+}
+
 func TestAppHasRequiredLabel(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
 
 	t.Run("HasRequiredLabel", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -30,42 +51,52 @@ func TestAppHasRequiredLabel(t *testing.T) {
 }
 
 func TestAppIsDefaultBranch(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
 
 	t.Run("IsDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "main",
+			Branches: domain.Branches{
+				Base: "main",
+			},
 		}
 		assert.True(t, app.IsDefaultBranch(event))
 	})
 	t.Run("NotIsDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "other-branch",
+			Branches: domain.Branches{
+				Base: "other-branhh",
+			},
 		}
 		assert.False(t, app.IsDefaultBranch(event))
 	})
 }
 
 func TestAppIsValid(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
 
 	t.Run("Valid", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "main",
+			Branches: domain.Branches{
+				Base: "main",
+			},
 			Labels: domain.Labels{"required-label"},
 		}
 		assert.True(t, app.IsValid(event))
 	})
 	t.Run("NoLabel", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "main",
+			Branches: domain.Branches{
+				Base: "main",
+			},
 			Labels: domain.Labels{},
 		}
 		assert.False(t, app.IsValid(event))
 	})
 	t.Run("NotDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
-			Branch: "other-branch",
+			Branches: domain.Branches{
+				Base: "other-branhh",
+			},
 			Labels: domain.Labels{"required-label"},
 		}
 		assert.False(t, app.IsValid(event))
@@ -77,12 +108,12 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockParser := dmock.NewMockEventParser(ctrl)
-	mockParser.EXPECT().ParseExecutionDirectives().Return(expectedDirectives, nil).Times(1)
+	mockParser.EXPECT().ParseExecutionDirectives(domain.ParsedEvent{}, "../infrastructure/assets/").Return(expectedDirectives, nil).Times(1)
 
-	app := application.New("required-label", "main", mockParser)
+	app := createApp(t, mockParser)
 
 	t.Run("LoadExecutionDirectiveList", func(t *testing.T) {
-		err := app.LoadExecutionDirectiveList()
+		err := app.LoadExecutionDirectiveList(domain.ParsedEvent{})
 		assert.Nil(t, err)
 		assert.Equal(t, expectedDirectives, app.ExecutionDirectiveList.ExecutionDirectives,
 			"The execution directives should match the expected values.")
@@ -90,7 +121,8 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 }
 
 func TestAppRun(t *testing.T) {
-	app := application.New("required-label", "main", nil)
+	app := createApp(t, nil)
+
 	app.ExecutionDirectiveList = domain.ExecutionDirectiveList{
 		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
 	}
@@ -98,7 +130,7 @@ func TestAppRun(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockShellInvoker := amock.NewMockShellInvoker(ctrl)
-	mockShellInvoker.EXPECT().Execute(gomock.Any(), gomock.Eq(domain.ExecutionDirectiveList{
+	mockShellInvoker.EXPECT().Execute(gomock.Eq(domain.ExecutionDirectiveList{
 		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
 	})).Return(nil).Times(1)
 

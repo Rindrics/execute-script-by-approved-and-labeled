@@ -1,0 +1,3 @@
+foo.sh
+bar.sh
+hello_from_go.sh

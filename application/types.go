@@ -5,7 +5,7 @@ import (
 )
 
 type Config struct {
-	RquiredLabel              string
+	RequiredLabel             string
 	DefaultBranch             string
 	ExecutionDirectiveListDir string
 }
@@ -17,15 +17,21 @@ type App struct {
 	Logger                 Logger
 }
 
-func New(requiredLabel, defaultBranch string, parser domain.EventParser, logger Logger) *App {
+func New(config Config, parser domain.EventParser, logger Logger) *App {
+	logger.Debug("application.New", "config", config)
 	return &App{
-		Config: Config{
-			RquiredLabel:  requiredLabel,
-			DefaultBranch: defaultBranch,
+		Config: config,
+		ExecutionDirectiveList: domain.ExecutionDirectiveList{
+			Directory: config.ExecutionDirectiveListDir,
 		},
 		Parser: parser,
 		Logger: logger,
 	}
+}
+
+func (a *App) ParseEvent() (domain.ParsedEvent, error) {
+	a.Logger.Debug("application.ParseEvent", "*App:", a)
+	return a.Parser.ParseEvent()
 }
 
 func (a *App) IsValid(event domain.ParsedEvent) bool {
@@ -36,22 +42,33 @@ func (a *App) IsValid(event domain.ParsedEvent) bool {
 }
 
 func (a *App) HasRequiredLabel(event domain.ParsedEvent) bool {
-	if event.Labels.Contains(a.Config.RquiredLabel) {
+	if event.Labels.Contains(a.Config.RequiredLabel) {
 		return true
 	}
 	return false
 }
 
 func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
-	if event.Branch == a.Config.DefaultBranch {
+	if event.Branches.Base == a.Config.DefaultBranch {
 		return true
 	}
 	return false
 }
 
-func (a *App) LoadExecutionDirectiveList() error {
+func (a *App) LoadExecutionDirectives(event domain.ParsedEvent) error {
+	executionDirectives, err := a.Parser.ParseExecutionDirectives(event, a.Config.ExecutionDirectiveListDir)
+	if err != nil {
+		return err
+	}
+	a.Logger.Info("application.LoadExecutionDirectives()", "executionDirectives", executionDirectives)
+	a.ExecutionDirectiveList.ExecutionDirectives = executionDirectives
+
+	return nil
+}
+
+func (a *App) LoadExecutionDirectiveList(event domain.ParsedEvent) error {
 	a.ExecutionDirectiveList.Directory = a.Config.ExecutionDirectiveListDir
-	if err := a.ExecutionDirectiveList.LoadExecutionDirectives(a.Parser); err != nil {
+	if err := a.LoadExecutionDirectives(event); err != nil {
 		return err
 	}
 
@@ -59,11 +76,11 @@ func (a *App) LoadExecutionDirectiveList() error {
 }
 
 type ShellInvoker interface {
-	Execute(Config, domain.ExecutionDirectiveList) error
+	Execute(domain.ExecutionDirectiveList) error
 }
 
 func (a *App) Run(invoker ShellInvoker) error {
-	return invoker.Execute(a.Config, a.ExecutionDirectiveList)
+	return invoker.Execute(a.ExecutionDirectiveList)
 }
 
 type Logger interface {
