@@ -19,4 +19,4 @@ jobs:
           go-version: "1.22.1"
 
       - name: Test
-        run: make test
+        run: make test LOG_LEVEL=debug
