@@ -65,11 +65,11 @@ func (a *App) LoadExecutionDirectiveList(event domain.ParsedEvent) error {
 }
 
 type ShellInvoker interface {
-	Execute(Config, domain.ExecutionDirectiveList) error
+	Execute(domain.ExecutionDirectiveList) error
 }
 
 func (a *App) Run(invoker ShellInvoker) error {
-	return invoker.Execute(a.Config, a.ExecutionDirectiveList)
+	return invoker.Execute(a.ExecutionDirectiveList)
 }
 
 type Logger interface {

@@ -124,7 +124,7 @@ func TestAppRun(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockShellInvoker := amock.NewMockShellInvoker(ctrl)
-	mockShellInvoker.EXPECT().Execute(gomock.Any(), gomock.Eq(domain.ExecutionDirectiveList{
+	mockShellInvoker.EXPECT().Execute(gomock.Eq(domain.ExecutionDirectiveList{
 		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
 	})).Return(nil).Times(1)
 

@@ -12,7 +12,6 @@ package application
 import (
 	reflect "reflect"
 
-	application "github.com/Rindrics/execute-script-with-merge/application"
 	domain "github.com/Rindrics/execute-script-with-merge/domain"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -41,17 +40,17 @@ func (m *MockShellInvoker) EXPECT() *MockShellInvokerMockRecorder {
 }
 
 // Execute mocks base method.
-func (m *MockShellInvoker) Execute(arg0 application.Config, arg1 domain.ExecutionDirectiveList) error {
+func (m *MockShellInvoker) Execute(arg0 domain.ExecutionDirectiveList) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Execute", arg0, arg1)
+	ret := m.ctrl.Call(m, "Execute", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Execute indicates an expected call of Execute.
-func (mr *MockShellInvokerMockRecorder) Execute(arg0, arg1 any) *gomock.Call {
+func (mr *MockShellInvokerMockRecorder) Execute(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockShellInvoker)(nil).Execute), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockShellInvoker)(nil).Execute), arg0)
 }
 
 // MockLogger is a mock of Logger interface.
