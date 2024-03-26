@@ -6,7 +6,7 @@ build:
 
 .PHONY: test
 test:
-	@LOG_LEVEL=${LOG_LEVEL} go test -v ./...
+	@LOG_LEVEL=${LOG_LEVEL} go test -v ./... ${TESTFLAGS}
 
 .PHONY: mock
 mock:
