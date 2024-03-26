@@ -1,3 +1,5 @@
 foo.sh
 bar.sh
 hello_from_go.sh
+for_test.sh
+for_test2.sh
