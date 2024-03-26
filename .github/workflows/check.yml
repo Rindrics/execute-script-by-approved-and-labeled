@@ -1,7 +1,8 @@
 name: Check Application
 
 on:
-  push
+  - push
+  - workflow_dispatch
 
 jobs:
   check:
