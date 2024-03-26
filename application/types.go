@@ -55,9 +55,20 @@ func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
 	return false
 }
 
+func (a *App) LoadExecutionDirectives(event domain.ParsedEvent) error {
+	executionDirectives, err := a.Parser.ParseExecutionDirectives(event, a.Config.ExecutionDirectiveListDir)
+	if err != nil {
+		return err
+	}
+	a.Logger.Info("application.LoadExecutionDirectives()", "executionDirectives", executionDirectives)
+	a.ExecutionDirectiveList.ExecutionDirectives = executionDirectives
+
+	return nil
+}
+
 func (a *App) LoadExecutionDirectiveList(event domain.ParsedEvent) error {
 	a.ExecutionDirectiveList.Directory = a.Config.ExecutionDirectiveListDir
-	if err := a.ExecutionDirectiveList.LoadExecutionDirectives(a.Parser, event, a.Config.ExecutionDirectiveListDir); err != nil {
+	if err := a.LoadExecutionDirectives(event); err != nil {
 		return err
 	}
 
