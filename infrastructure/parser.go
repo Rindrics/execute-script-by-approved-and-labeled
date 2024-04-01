@@ -67,6 +67,7 @@ func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
 			Base: *event.PullRequest.Base.Ref,
 		},
 		Labels: labels,
+		Merged: *event.PullRequest.Merged,
 	}, nil
 }
 

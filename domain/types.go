@@ -2,15 +2,6 @@ package domain
 
 type Labels []string
 
-func (l Labels) Contains(label string) bool {
-	for _, v := range l {
-		if v == label {
-			return true
-		}
-	}
-	return false
-}
-
 type Branches struct {
 	Base string
 	Head string
@@ -19,6 +10,7 @@ type Branches struct {
 type ParsedEvent struct {
 	Branches Branches
 	Labels   Labels
+	Merged   bool
 }
 
 type TargetScriptList struct {

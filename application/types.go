@@ -15,19 +15,21 @@ type App struct {
 	TargetScriptList domain.TargetScriptList
 	Parser           domain.EventParser
 	Validator        domain.TargetScriptListValidator
+	EventValidator   ParsedEventValidator
 	Logger           Logger
 }
 
-func New(config Config, parser domain.EventParser, validator TargetScriptListValidator, logger Logger) *App {
+func New(config Config, parser domain.EventParser, validator TargetScriptListValidator, eventValidator ParsedEventValidator, logger Logger) *App {
 	logger.Debug("application.New", "config", config)
 	return &App{
 		Config: config,
 		TargetScriptList: domain.TargetScriptList{
 			Directory: config.TargetScriptListDir,
 		},
-		Parser:    parser,
-		Validator: validator,
-		Logger:    logger,
+		Parser:         parser,
+		Validator:      validator,
+		EventValidator: eventValidator,
+		Logger:         logger,
 	}
 }
 
@@ -37,28 +39,11 @@ func (a *App) ParseEvent() (domain.ParsedEvent, error) {
 }
 
 func (a *App) IsValid(event domain.ParsedEvent) bool {
-	if a.HasRequiredLabel(event) && a.IsDefaultBranch(event) {
-		return true
-	}
-	return false
+	return a.EventValidator.Validate(event)
 }
 
 func (a *App) ValidateTargetScripts() bool {
 	return a.Validator.Validate(a.TargetScriptList)
-}
-
-func (a *App) HasRequiredLabel(event domain.ParsedEvent) bool {
-	if event.Labels.Contains(a.Config.RequiredLabel) {
-		return true
-	}
-	return false
-}
-
-func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
-	if event.Branches.Base == a.Config.DefaultBranch {
-		return true
-	}
-	return false
 }
 
 func (a *App) LoadTargetScripts(event domain.ParsedEvent) error {
@@ -97,4 +82,8 @@ type Logger interface {
 
 type TargetScriptListValidator interface {
 	Validate(list domain.TargetScriptList) bool
+}
+
+type ParsedEventValidator interface {
+	Validate(event domain.ParsedEvent) bool
 }

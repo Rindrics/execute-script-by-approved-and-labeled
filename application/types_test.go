@@ -12,15 +12,15 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func createApp(t *testing.T, parser domain.EventParser, validator domain.TargetScriptListValidator) *application.App {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
+func createApp(t *testing.T, ctrl *gomock.Controller, parser domain.EventParser, validator domain.TargetScriptListValidator, eventValidator application.ParsedEventValidator) *application.App {
 	if parser == nil {
 		parser = dmock.NewMockEventParser(ctrl)
 	}
 	if validator == nil {
 		validator = amock.NewMockTargetScriptListValidator(ctrl)
+	}
+	if eventValidator == nil {
+		eventValidator = amock.NewMockParsedEventValidator(ctrl)
 	}
 	logger := infrastructure.NewLogger()
 
@@ -30,77 +30,45 @@ func createApp(t *testing.T, parser domain.EventParser, validator domain.TargetS
 		TargetScriptListDir: "../infrastructure/assets/",
 	}
 
-	app := application.New(config, parser, validator, logger)
+	app := application.New(config, parser, validator, eventValidator, logger)
 
 	return app
 }
 
-func TestAppHasRequiredLabel(t *testing.T) {
-	app := createApp(t, nil, nil)
-
-	t.Run("HasRequiredLabel", func(t *testing.T) {
-		event := domain.ParsedEvent{
-			Labels: domain.Labels{"required-label"},
-		}
-
-		assert.True(t, app.HasRequiredLabel(event))
-	})
-	t.Run("NotHasRequiredLabel", func(t *testing.T) {
-		event := domain.ParsedEvent{
-			Labels: domain.Labels{"other-label"},
-		}
-		assert.False(t, app.HasRequiredLabel(event))
-	})
-}
-
-func TestAppIsDefaultBranch(t *testing.T) {
-	app := createApp(t, nil, nil)
-
-	t.Run("IsDefaultBranch", func(t *testing.T) {
-		event := domain.ParsedEvent{
-			Branches: domain.Branches{
-				Base: "main",
-			},
-		}
-		assert.True(t, app.IsDefaultBranch(event))
-	})
-	t.Run("NotIsDefaultBranch", func(t *testing.T) {
-		event := domain.ParsedEvent{
-			Branches: domain.Branches{
-				Base: "other-branhh",
-			},
-		}
-		assert.False(t, app.IsDefaultBranch(event))
-	})
-}
-
 func TestAppIsValid(t *testing.T) {
-	app := createApp(t, nil, nil)
-
 	t.Run("Valid", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		eventValidator := amock.NewMockParsedEventValidator(ctrl)
+		eventValidator.EXPECT().Validate(gomock.Any()).Return(true).AnyTimes()
+
+		app := createApp(t, ctrl, nil, nil, eventValidator)
+
 		event := domain.ParsedEvent{
 			Branches: domain.Branches{
 				Base: "main",
 			},
 			Labels: domain.Labels{"required-label"},
+			Merged: true,
 		}
 		assert.True(t, app.IsValid(event))
 	})
-	t.Run("NoLabel", func(t *testing.T) {
+	t.Run("InValid", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		eventValidator := amock.NewMockParsedEventValidator(ctrl)
+		eventValidator.EXPECT().Validate(gomock.Any()).Return(false).AnyTimes()
+
+		app := createApp(t, ctrl, nil, nil, eventValidator)
+
 		event := domain.ParsedEvent{
 			Branches: domain.Branches{
 				Base: "main",
 			},
 			Labels: domain.Labels{},
-		}
-		assert.False(t, app.IsValid(event))
-	})
-	t.Run("NotDefaultBranch", func(t *testing.T) {
-		event := domain.ParsedEvent{
-			Branches: domain.Branches{
-				Base: "other-branhh",
-			},
-			Labels: domain.Labels{"required-label"},
+			Merged: true,
 		}
 		assert.False(t, app.IsValid(event))
 	})
@@ -110,10 +78,11 @@ func TestAppLoadTargetScriptList(t *testing.T) {
 	expectedScripts := []domain.TargetScript{"foo.sh", "bar.sh"}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
 	mockParser := dmock.NewMockEventParser(ctrl)
 	mockParser.EXPECT().ParseTargetScripts(domain.ParsedEvent{}, "../infrastructure/assets/").Return(expectedScripts, nil).Times(1)
 
-	app := createApp(t, mockParser, nil)
+	app := createApp(t, ctrl, mockParser, nil, nil)
 
 	t.Run("LoadTargetScriptList", func(t *testing.T) {
 		err := app.LoadTargetScriptList(domain.ParsedEvent{})
@@ -125,12 +94,15 @@ func TestAppLoadTargetScriptList(t *testing.T) {
 
 func TestAppValidateTargetScriptList(t *testing.T) {
 	t.Run("script exist", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
 		validator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
 		validator.EXPECT().Validate(domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
 		}).Return(true).Times(1)
 
-		app := createApp(t, nil, validator)
+		app := createApp(t, ctrl, nil, validator, nil)
 
 		app.TargetScriptList = domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
@@ -140,12 +112,15 @@ func TestAppValidateTargetScriptList(t *testing.T) {
 	})
 
 	t.Run("unknown script", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
 		validator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
 		validator.EXPECT().Validate(domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "unknown.sh"},
 		}).Return(false).Times(1)
 
-		app := createApp(t, nil, validator)
+		app := createApp(t, ctrl, nil, validator, nil)
 
 		app.TargetScriptList = domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "unknown.sh"},
@@ -156,14 +131,15 @@ func TestAppValidateTargetScriptList(t *testing.T) {
 }
 
 func TestAppRun(t *testing.T) {
-	app := createApp(t, nil, nil)
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	app := createApp(t, ctrl, nil, nil, nil)
 
 	app.TargetScriptList = domain.TargetScriptList{
 		TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
 	}
 
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 	mockShellInvoker := amock.NewMockShellInvoker(ctrl)
 	mockShellInvoker.EXPECT().Execute(gomock.Eq(domain.TargetScriptList{
 		TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
