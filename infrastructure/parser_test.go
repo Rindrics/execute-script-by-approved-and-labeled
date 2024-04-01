@@ -33,33 +33,33 @@ func TestParsePullRequestEvent(t *testing.T) {
 	os.Unsetenv("GITHUB_EVENT_PATH")
 }
 
-func TestParseExecutionDirectives(t *testing.T) {
+func TestParseTargetScripts(t *testing.T) {
 	pe := domain.ParsedEvent{
 		Branches: domain.Branches{
-			Base: "main",
-			Head: "issue-3-infrastructure",
+			Base: "origin/main",
+			Head: "origin/branch-for-test",
 		},
 	}
 
 	parser := EventParser{NewLogger()}
-	ed, err := parser.ParseExecutionDirectives(pe, "assets/execution_directive_list.txt")
+	ed, err := parser.ParseTargetScripts(pe, "assets/target_script_list.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.NotNil(t, ed)
-	assert.Equal(t, domain.ExecutionDirective("foo.sh"), ed[0])
-	assert.Equal(t, domain.ExecutionDirective("bar.sh"), ed[1])
+	assert.Equal(t, domain.TargetScript("for_test.sh"), ed[3])
+	assert.Equal(t, domain.TargetScript("for_test2.sh"), ed[4])
 }
 
 func TestGetGitDiff(t *testing.T) {
-	diff, err := getGitDiff("main", "issue-3-infrastructure", "assets/execution_directive_list.txt", NewLogger())
+	diff, err := getGitDiff("origin/main", "origin/branch-for-test", "assets/target_script_list.txt", NewLogger())
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.NotEqual(t, &diffparser.Diff{}, diff) // get non-empty diff
 }
 
-func TestParseExecutionDirectivesFromGitDiff(t *testing.T) {
+func TestParseTargetScripsFromGitDiff(t *testing.T) {
 	logger := NewLogger()
 	diff := &diffparser.Diff{
 		Files: []*diffparser.DiffFile{
@@ -76,7 +76,7 @@ func TestParseExecutionDirectivesFromGitDiff(t *testing.T) {
 			},
 		},
 	}
-	ed := parseExecutionDirectivesFromGitDiff(diff, logger)
-	assert.NotNil(t, ed)
-	assert.Equal(t, domain.ExecutionDirective("foo.sh"), ed[0])
+	ts := parseTargetScriptsFromGitDiff(diff, logger)
+	assert.NotNil(t, ts)
+	assert.Equal(t, domain.TargetScript("foo.sh"), ts[0])
 }

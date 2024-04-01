@@ -70,23 +70,23 @@ func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
 	}, nil
 }
 
-func (e EventParser) ParseExecutionDirectives(pe domain.ParsedEvent, edlPath string) ([]domain.ExecutionDirective, error) {
-	e.Logger.Debug("infrastructure.ParseExecutionDirectives", "head", pe.Branches.Head, "base", pe.Branches.Base)
-	diff, err := getGitDiff(pe.Branches.Base, pe.Branches.Head, edlPath, e.Logger)
+func (e EventParser) ParseTargetScripts(pe domain.ParsedEvent, tslPath string) ([]domain.TargetScript, error) {
+	e.Logger.Debug("infrastructure.ParseTargetScripts", "head", pe.Branches.Head, "base", pe.Branches.Base)
+	diff, err := getGitDiff(pe.Branches.Base, pe.Branches.Head, tslPath, e.Logger)
 	if err != nil {
-		return []domain.ExecutionDirective{}, err
+		return []domain.TargetScript{}, err
 	}
-	ed := parseExecutionDirectivesFromGitDiff(diff, e.Logger)
-	e.Logger.Info("infrastructure.ParseExecutionDirectives", "ExecutionDirectives", ed)
+	ts := parseTargetScriptsFromGitDiff(diff, e.Logger)
+	e.Logger.Info("infrastructure.ParseTargetScripts", "TargetScripts", ts)
 
-	return ed, nil
+	return ts, nil
 }
 
 func getGitDiff(base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
 	// TODO:
 	// - define application.Config.ExecutionDirectiveListDir as new type
 	// - define Validate() to check whether it exists in git index
-	cmd := exec.Command("git", "diff", "--no-color", base+"..."+head, "--", targetFile)
+	cmd := exec.Command("git", "diff", "--no-color", base+".."+head, "--", targetFile)
 	logger.Debug("infrastructure.getGitDiff", "cmd", cmd.String())
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -116,18 +116,18 @@ func getGitDiff(base, head, targetFile string, logger *slog.Logger) (*diffparser
 	return diffparser.Parse(string(output))
 }
 
-func parseExecutionDirectivesFromGitDiff(diff *diffparser.Diff, logger *slog.Logger) []domain.ExecutionDirective {
-	executionDirectives := []domain.ExecutionDirective{}
+func parseTargetScriptsFromGitDiff(diff *diffparser.Diff, logger *slog.Logger) []domain.TargetScript {
+	targetScripts := []domain.TargetScript{}
 
 	for _, file := range diff.Files {
-		logger.Debug("infrastructure.parseExecutionDirectivesFromGitDiff", "file", file)
+		logger.Debug("infrastructure.parseTargetScriptsFromGitDiff", "file", file)
 		for _, hunk := range file.Hunks {
 			for _, line := range hunk.NewRange.Lines {
-				logger.Debug("infrastructure.parseExecutionDirectivesFromGitDiff", "line", line)
-				executionDirectives = append(executionDirectives, domain.ExecutionDirective(line.Content))
+				logger.Debug("infrastructure.parseTargetScriptsFromGitDiff", "line", line)
+				targetScripts = append(targetScripts, domain.TargetScript(line.Content))
 			}
 		}
 	}
-	logger.Info("infrastructure.parseExecutionDirectivesFromGitDiff", "executionDirectives", executionDirectives)
-	return executionDirectives
+	logger.Info("infrastructure.parseTargetScriptsFromGitDiff", "targetScripts", targetScripts)
+	return targetScripts
 }

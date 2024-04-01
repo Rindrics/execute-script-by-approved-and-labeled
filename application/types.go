@@ -11,17 +11,17 @@ type Config struct {
 }
 
 type App struct {
-	Config                 Config
-	ExecutionDirectiveList domain.ExecutionDirectiveList
-	Parser                 domain.EventParser
-	Logger                 Logger
+	Config           Config
+	TargetScriptList domain.TargetScriptList
+	Parser           domain.EventParser
+	Logger           Logger
 }
 
 func New(config Config, parser domain.EventParser, logger Logger) *App {
 	logger.Debug("application.New", "config", config)
 	return &App{
 		Config: config,
-		ExecutionDirectiveList: domain.ExecutionDirectiveList{
+		TargetScriptList: domain.TargetScriptList{
 			Directory: config.ExecutionDirectiveListDir,
 		},
 		Parser: parser,
@@ -56,18 +56,18 @@ func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
 }
 
 func (a *App) LoadExecutionDirectives(event domain.ParsedEvent) error {
-	executionDirectives, err := a.Parser.ParseExecutionDirectives(event, a.Config.ExecutionDirectiveListDir)
+	targetScripts, err := a.Parser.ParseTargetScripts(event, a.Config.ExecutionDirectiveListDir)
 	if err != nil {
 		return err
 	}
-	a.Logger.Info("application.LoadExecutionDirectives()", "executionDirectives", executionDirectives)
-	a.ExecutionDirectiveList.ExecutionDirectives = executionDirectives
+	a.Logger.Info("application.LoadTargetScripts()", "targetScripts", targetScripts)
+	a.TargetScriptList.TargetScripts = targetScripts
 
 	return nil
 }
 
 func (a *App) LoadExecutionDirectiveList(event domain.ParsedEvent) error {
-	a.ExecutionDirectiveList.Directory = a.Config.ExecutionDirectiveListDir
+	a.TargetScriptList.Directory = a.Config.ExecutionDirectiveListDir
 	if err := a.LoadExecutionDirectives(event); err != nil {
 		return err
 	}
@@ -76,11 +76,11 @@ func (a *App) LoadExecutionDirectiveList(event domain.ParsedEvent) error {
 }
 
 type ShellInvoker interface {
-	Execute(domain.ExecutionDirectiveList) error
+	Execute(domain.TargetScriptList) error
 }
 
 func (a *App) Run(invoker ShellInvoker) error {
-	return invoker.Execute(a.ExecutionDirectiveList)
+	return invoker.Execute(a.TargetScriptList)
 }
 
 type Logger interface {

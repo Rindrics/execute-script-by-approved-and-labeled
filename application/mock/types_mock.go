@@ -40,7 +40,7 @@ func (m *MockShellInvoker) EXPECT() *MockShellInvokerMockRecorder {
 }
 
 // Execute mocks base method.
-func (m *MockShellInvoker) Execute(arg0 domain.ExecutionDirectiveList) error {
+func (m *MockShellInvoker) Execute(arg0 domain.TargetScriptList) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", arg0)
 	ret0, _ := ret[0].(error)

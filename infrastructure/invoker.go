@@ -19,8 +19,8 @@ func NewShellInvoker(logger *slog.Logger) ShellInvoker {
 	}
 }
 
-func (s ShellInvoker) executeShellScript(dir string, ed domain.ExecutionDirective) error {
-	cmd := exec.Command("/bin/bash", path.Join(dir, string(ed)))
+func (s ShellInvoker) executeShellScript(dir string, ts domain.TargetScript) error {
+	cmd := exec.Command("/bin/bash", path.Join(dir, string(ts)))
 	s.Logger.Debug("infrastructure.ShellInvoker.executeShellScript", "cmd", cmd.String())
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -45,12 +45,12 @@ func (s ShellInvoker) executeShellScript(dir string, ed domain.ExecutionDirectiv
 	return nil
 }
 
-func (s ShellInvoker) Execute(edl domain.ExecutionDirectiveList) error {
-	s.Logger.Debug("infrastructure.ShellInvoker.Execute", "Directory:", edl.Directory, "ExecutionDirectives:", edl.ExecutionDirectives)
+func (s ShellInvoker) Execute(tsl domain.TargetScriptList) error {
+	s.Logger.Debug("infrastructure.ShellInvoker.Execute", "Directory:", tsl.Directory, "TargetScripts:", tsl.TargetScripts)
 
-	for _, ed := range edl.ExecutionDirectives {
-		s.Logger.Debug("infrastructure.ShellInvoker.Execute", "ExecutionDirective:", ed)
-		err := s.executeShellScript(edl.Directory, ed)
+	for _, ts := range tsl.TargetScripts {
+		s.Logger.Debug("infrastructure.ShellInvoker.Execute", "TargetScript:", ts)
+		err := s.executeShellScript(tsl.Directory, ts)
 		if err != nil {
 			return err
 		}

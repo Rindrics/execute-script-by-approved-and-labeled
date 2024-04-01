@@ -104,34 +104,34 @@ func TestAppIsValid(t *testing.T) {
 }
 
 func TestAppLoadExecutionDirectiveList(t *testing.T) {
-	expectedDirectives := []domain.ExecutionDirective{"foo.sh", "bar.sh"}
+	expectedScripts := []domain.TargetScript{"foo.sh", "bar.sh"}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockParser := dmock.NewMockEventParser(ctrl)
-	mockParser.EXPECT().ParseExecutionDirectives(domain.ParsedEvent{}, "../infrastructure/assets/").Return(expectedDirectives, nil).Times(1)
+	mockParser.EXPECT().ParseTargetScripts(domain.ParsedEvent{}, "../infrastructure/assets/").Return(expectedScripts, nil).Times(1)
 
 	app := createApp(t, mockParser)
 
 	t.Run("LoadExecutionDirectiveList", func(t *testing.T) {
 		err := app.LoadExecutionDirectiveList(domain.ParsedEvent{})
 		assert.Nil(t, err)
-		assert.Equal(t, expectedDirectives, app.ExecutionDirectiveList.ExecutionDirectives,
-			"The execution directives should match the expected values.")
+		assert.Equal(t, expectedScripts, app.TargetScriptList.TargetScripts,
+			"The target scripts should match the expected values.")
 	})
 }
 
 func TestAppRun(t *testing.T) {
 	app := createApp(t, nil)
 
-	app.ExecutionDirectiveList = domain.ExecutionDirectiveList{
-		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
+	app.TargetScriptList = domain.TargetScriptList{
+		TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
 	}
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockShellInvoker := amock.NewMockShellInvoker(ctrl)
-	mockShellInvoker.EXPECT().Execute(gomock.Eq(domain.ExecutionDirectiveList{
-		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
+	mockShellInvoker.EXPECT().Execute(gomock.Eq(domain.TargetScriptList{
+		TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
 	})).Return(nil).Times(1)
 
 	t.Run("Run", func(t *testing.T) {
