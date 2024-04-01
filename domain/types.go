@@ -22,13 +22,13 @@ type ParsedEvent struct {
 }
 
 type TargetScriptList struct {
-	ExecutionDirectives []ExecutionDirective
-	Directory           string
+	TargetScripts []TargetScript
+	Directory     string
 }
 
-type ExecutionDirective string
+type TargetScript string
 
 type EventParser interface {
 	ParseEvent() (ParsedEvent, error)
-	ParseExecutionDirectives(ParsedEvent, string) ([]ExecutionDirective, error)
+	ParseTargetScripts(ParsedEvent, string) ([]TargetScript, error)
 }

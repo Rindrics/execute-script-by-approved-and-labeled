@@ -56,12 +56,12 @@ func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
 }
 
 func (a *App) LoadExecutionDirectives(event domain.ParsedEvent) error {
-	executionDirectives, err := a.Parser.ParseExecutionDirectives(event, a.Config.ExecutionDirectiveListDir)
+	targetScripts, err := a.Parser.ParseTargetScripts(event, a.Config.ExecutionDirectiveListDir)
 	if err != nil {
 		return err
 	}
-	a.Logger.Info("application.LoadExecutionDirectives()", "executionDirectives", executionDirectives)
-	a.TargetScriptList.ExecutionDirectives = executionDirectives
+	a.Logger.Info("application.LoadTargetScripts()", "targetScripts", targetScripts)
+	a.TargetScriptList.TargetScripts = targetScripts
 
 	return nil
 }

@@ -11,7 +11,7 @@ func TestExecute(t *testing.T) {
 	invoker := NewShellInvoker(logger)
 
 	err := invoker.Execute(domain.TargetScriptList{
-		ExecutionDirectives: []domain.ExecutionDirective{
+		TargetScripts: []domain.TargetScript{
 			"hello_from_go.sh",
 		},
 		Directory: "assets/",
