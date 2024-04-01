@@ -4,7 +4,7 @@ inputs:
   requiredLabel:
     description: 'Required labels to execute script on merge'
     required: true
-  defaultBranch:
+  baseBranch:
     description: 'Execute script if the base branch of the pull request matches with this value'
     default: 'main'
     required: false
