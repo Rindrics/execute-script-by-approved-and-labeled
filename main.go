@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// TODO: remove EventParser from argument
-	app := application.New(config, infrastructure.EventParser{}, logger)
+	app := application.New(config, infrastructure.EventParser{}, &infrastructure.TargetScriptListValidator{logger}, logger)
 	logger.Debug("main", "app:", app)
 
 	event, err := app.ParseEvent()
@@ -31,8 +31,12 @@ func main() {
 	if app.IsValid(event) {
 		app.LoadTargetScriptList(event)
 		logger.Debug("main", "app.TargetScriptList", app.TargetScriptList)
-		logger.Info("executing TargetScriptList")
-		app.Run(infrastructure.NewShellInvoker(logger))
+		if app.ValidateTargetScripts() {
+			logger.Info("executing TargetScriptList")
+			app.Run(infrastructure.NewShellInvoker(logger))
+		} else {
+			logger.Info("exit because TargetScriptList did not meet requirements")
+		}
 	} else {
 		logger.Info("exit because event did not meet requirements")
 	}

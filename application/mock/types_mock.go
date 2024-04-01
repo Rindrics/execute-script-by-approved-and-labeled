@@ -126,3 +126,40 @@ func (mr *MockLoggerMockRecorder) Info(arg0 any, arg1 ...any) *gomock.Call {
 	varargs := append([]any{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Info", reflect.TypeOf((*MockLogger)(nil).Info), varargs...)
 }
+
+// MockTargetScriptListValidator is a mock of TargetScriptListValidator interface.
+type MockTargetScriptListValidator struct {
+	ctrl     *gomock.Controller
+	recorder *MockTargetScriptListValidatorMockRecorder
+}
+
+// MockTargetScriptListValidatorMockRecorder is the mock recorder for MockTargetScriptListValidator.
+type MockTargetScriptListValidatorMockRecorder struct {
+	mock *MockTargetScriptListValidator
+}
+
+// NewMockTargetScriptListValidator creates a new mock instance.
+func NewMockTargetScriptListValidator(ctrl *gomock.Controller) *MockTargetScriptListValidator {
+	mock := &MockTargetScriptListValidator{ctrl: ctrl}
+	mock.recorder = &MockTargetScriptListValidatorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTargetScriptListValidator) EXPECT() *MockTargetScriptListValidatorMockRecorder {
+	return m.recorder
+}
+
+// Validate mocks base method.
+func (m *MockTargetScriptListValidator) Validate(list domain.TargetScriptList) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Validate", list)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// Validate indicates an expected call of Validate.
+func (mr *MockTargetScriptListValidatorMockRecorder) Validate(list any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockTargetScriptListValidator)(nil).Validate), list)
+}
