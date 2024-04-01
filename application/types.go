@@ -5,9 +5,9 @@ import (
 )
 
 type Config struct {
-	RequiredLabel             string
-	DefaultBranch             string
-	ExecutionDirectiveListDir string
+	RequiredLabel       string
+	DefaultBranch       string
+	TargetScriptListDir string
 }
 
 type App struct {
@@ -22,7 +22,7 @@ func New(config Config, parser domain.EventParser, logger Logger) *App {
 	return &App{
 		Config: config,
 		TargetScriptList: domain.TargetScriptList{
-			Directory: config.ExecutionDirectiveListDir,
+			Directory: config.TargetScriptListDir,
 		},
 		Parser: parser,
 		Logger: logger,
@@ -55,8 +55,8 @@ func (a *App) IsDefaultBranch(event domain.ParsedEvent) bool {
 	return false
 }
 
-func (a *App) LoadExecutionDirectives(event domain.ParsedEvent) error {
-	targetScripts, err := a.Parser.ParseTargetScripts(event, a.Config.ExecutionDirectiveListDir)
+func (a *App) LoadTargetScripts(event domain.ParsedEvent) error {
+	targetScripts, err := a.Parser.ParseTargetScripts(event, a.Config.TargetScriptListDir)
 	if err != nil {
 		return err
 	}
@@ -66,9 +66,9 @@ func (a *App) LoadExecutionDirectives(event domain.ParsedEvent) error {
 	return nil
 }
 
-func (a *App) LoadExecutionDirectiveList(event domain.ParsedEvent) error {
-	a.TargetScriptList.Directory = a.Config.ExecutionDirectiveListDir
-	if err := a.LoadExecutionDirectives(event); err != nil {
+func (a *App) LoadTargetScriptList(event domain.ParsedEvent) error {
+	a.TargetScriptList.Directory = a.Config.TargetScriptListDir
+	if err := a.LoadTargetScripts(event); err != nil {
 		return err
 	}
 

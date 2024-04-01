@@ -22,9 +22,9 @@ func createApp(t *testing.T, parser domain.EventParser) *application.App {
 	logger := infrastructure.NewLogger()
 
 	config := application.Config{
-		RequiredLabel:             "required-label",
-		DefaultBranch:             "main",
-		ExecutionDirectiveListDir: "../infrastructure/assets/",
+		RequiredLabel:       "required-label",
+		DefaultBranch:       "main",
+		TargetScriptListDir: "../infrastructure/assets/",
 	}
 
 	app := application.New(config, parser, logger)
@@ -103,7 +103,7 @@ func TestAppIsValid(t *testing.T) {
 	})
 }
 
-func TestAppLoadExecutionDirectiveList(t *testing.T) {
+func TestAppLoadTargetScriptList(t *testing.T) {
 	expectedScripts := []domain.TargetScript{"foo.sh", "bar.sh"}
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -112,8 +112,8 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 
 	app := createApp(t, mockParser)
 
-	t.Run("LoadExecutionDirectiveList", func(t *testing.T) {
-		err := app.LoadExecutionDirectiveList(domain.ParsedEvent{})
+	t.Run("LoadTargetScriptList", func(t *testing.T) {
+		err := app.LoadTargetScriptList(domain.ParsedEvent{})
 		assert.Nil(t, err)
 		assert.Equal(t, expectedScripts, app.TargetScriptList.TargetScripts,
 			"The target scripts should match the expected values.")

@@ -12,9 +12,9 @@ func main() {
 
 	// TODO: load config from environment variables
 	config := application.Config{
-		RequiredLabel:             "test-label",
-		DefaultBranch:             "main",
-		ExecutionDirectiveListDir: "infrastructure/assets/",
+		RequiredLabel:       "test-label",
+		DefaultBranch:       "main",
+		TargetScriptListDir: "infrastructure/assets/",
 	}
 
 	// TODO: remove EventParser from argument
@@ -29,7 +29,7 @@ func main() {
 
 	// TODO: add label existence to validation
 	if app.IsValid(event) {
-		app.LoadExecutionDirectiveList(event)
+		app.LoadTargetScriptList(event)
 		logger.Debug("main", "app.TargetScriptList", app.TargetScriptList)
 		logger.Info("executing TargetScriptList")
 		app.Run(infrastructure.NewShellInvoker(logger))
