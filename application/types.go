@@ -88,3 +88,7 @@ type Logger interface {
 	Info(string, ...any)
 	Error(string, ...any)
 }
+
+type TargetScriptValidator interface {
+	Validate(list domain.TargetScriptList) bool
+}
