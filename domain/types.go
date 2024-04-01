@@ -21,7 +21,7 @@ type ParsedEvent struct {
 	Labels   Labels
 }
 
-type ExecutionDirectiveList struct {
+type TargetScriptList struct {
 	ExecutionDirectives []ExecutionDirective
 	Directory           string
 }

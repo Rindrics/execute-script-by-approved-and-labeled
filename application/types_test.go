@@ -115,7 +115,7 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 	t.Run("LoadExecutionDirectiveList", func(t *testing.T) {
 		err := app.LoadExecutionDirectiveList(domain.ParsedEvent{})
 		assert.Nil(t, err)
-		assert.Equal(t, expectedDirectives, app.ExecutionDirectiveList.ExecutionDirectives,
+		assert.Equal(t, expectedDirectives, app.TargetScriptList.ExecutionDirectives,
 			"The execution directives should match the expected values.")
 	})
 }
@@ -123,14 +123,14 @@ func TestAppLoadExecutionDirectiveList(t *testing.T) {
 func TestAppRun(t *testing.T) {
 	app := createApp(t, nil)
 
-	app.ExecutionDirectiveList = domain.ExecutionDirectiveList{
+	app.TargetScriptList = domain.TargetScriptList{
 		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
 	}
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockShellInvoker := amock.NewMockShellInvoker(ctrl)
-	mockShellInvoker.EXPECT().Execute(gomock.Eq(domain.ExecutionDirectiveList{
+	mockShellInvoker.EXPECT().Execute(gomock.Eq(domain.TargetScriptList{
 		ExecutionDirectives: []domain.ExecutionDirective{"foo.sh", "bar.sh"},
 	})).Return(nil).Times(1)
 

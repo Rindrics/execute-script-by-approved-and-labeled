@@ -32,7 +32,7 @@ func TestMainValidEvent(t *testing.T) {
 	assert.True(t, app.IsValid(event))
 
 	app.LoadExecutionDirectiveList(event)
-	logger.Debug("main", "app.ExecutionDirectiveList", app.ExecutionDirectiveList)
+	logger.Debug("main", "app.TargetScriptList", app.TargetScriptList)
 	err = app.Run(infrastructure.NewShellInvoker(logger))
 	if err != nil {
 		logger.Error("failed to run", "error", err)

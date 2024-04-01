@@ -30,8 +30,8 @@ func main() {
 	// TODO: add label existence to validation
 	if app.IsValid(event) {
 		app.LoadExecutionDirectiveList(event)
-		logger.Debug("main", "app.ExecutionDirectiveList", app.ExecutionDirectiveList)
-		logger.Info("executing ExecutingDirectiveList")
+		logger.Debug("main", "app.TargetScriptList", app.TargetScriptList)
+		logger.Info("executing TargetScriptList")
 		app.Run(infrastructure.NewShellInvoker(logger))
 	} else {
 		logger.Info("exit because event did not meet requirements")

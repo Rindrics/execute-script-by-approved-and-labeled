@@ -45,7 +45,7 @@ func (s ShellInvoker) executeShellScript(dir string, ed domain.ExecutionDirectiv
 	return nil
 }
 
-func (s ShellInvoker) Execute(edl domain.ExecutionDirectiveList) error {
+func (s ShellInvoker) Execute(edl domain.TargetScriptList) error {
 	s.Logger.Debug("infrastructure.ShellInvoker.Execute", "Directory:", edl.Directory, "ExecutionDirectives:", edl.ExecutionDirectives)
 
 	for _, ed := range edl.ExecutionDirectives {
