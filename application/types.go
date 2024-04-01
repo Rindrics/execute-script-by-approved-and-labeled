@@ -14,7 +14,7 @@ type App struct {
 	Config           Config
 	TargetScriptList domain.TargetScriptList
 	Parser           domain.EventParser
-	Validator        domain.TargetScriptListValidator
+	Validator        TargetScriptListValidator
 	EventValidator   ParsedEventValidator
 	Logger           Logger
 }

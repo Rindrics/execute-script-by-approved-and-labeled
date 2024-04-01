@@ -25,10 +25,6 @@ type EventParser interface {
 	ParseTargetScripts(ParsedEvent, string) ([]TargetScript, error)
 }
 
-type TargetScriptListValidator interface {
-	Validate(list TargetScriptList) bool
-}
-
 type ScriptType int
 
 const (

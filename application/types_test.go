@@ -12,7 +12,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func createApp(t *testing.T, ctrl *gomock.Controller, parser domain.EventParser, validator domain.TargetScriptListValidator, eventValidator application.ParsedEventValidator) *application.App {
+func createApp(t *testing.T, ctrl *gomock.Controller, parser domain.EventParser, validator application.TargetScriptListValidator, eventValidator application.ParsedEventValidator) *application.App {
 	if parser == nil {
 		parser = dmock.NewMockEventParser(ctrl)
 	}
