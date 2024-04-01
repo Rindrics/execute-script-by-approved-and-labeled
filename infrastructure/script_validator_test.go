@@ -28,4 +28,14 @@ func TestScriptListValidatorValidate(t *testing.T) {
 			Directory: "assets/",
 		}))
 	})
+
+	t.Run("unknown script", func(t *testing.T) {
+		assert.False(t, validator.Validate(domain.TargetScriptList{
+			TargetScripts: []domain.TargetScript{
+				"foo.sh",
+				"unknown.sh",
+			},
+			Directory: "assets/",
+		}))
+	})
 }
