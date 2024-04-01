@@ -18,7 +18,7 @@ func TestMainValid(t *testing.T) {
 		TargetScriptListDir: "infrastructure/assets/",
 	}
 	logger := infrastructure.NewLogger()
-	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, logger)
+	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, config}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()
@@ -55,7 +55,7 @@ func TestMainInvalidEvent(t *testing.T) {
 		DefaultBranch:       "main",
 		TargetScriptListDir: "infrastructure/assets/",
 	}
-	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, logger)
+	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, config}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()
@@ -66,7 +66,7 @@ func TestMainInvalidEvent(t *testing.T) {
 	logger.Debug("main.TestMainValidEvent", "event:", event)
 	assert.NotNil(t, event)
 
-	assert.True(t, app.IsValid(event))
+	assert.False(t, app.IsValid(event))
 
 	os.Unsetenv("GITHUB_EVENT_PATH")
 }

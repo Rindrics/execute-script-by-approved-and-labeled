@@ -163,3 +163,40 @@ func (mr *MockTargetScriptListValidatorMockRecorder) Validate(list any) *gomock.
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockTargetScriptListValidator)(nil).Validate), list)
 }
+
+// MockParsedEventValidator is a mock of ParsedEventValidator interface.
+type MockParsedEventValidator struct {
+	ctrl     *gomock.Controller
+	recorder *MockParsedEventValidatorMockRecorder
+}
+
+// MockParsedEventValidatorMockRecorder is the mock recorder for MockParsedEventValidator.
+type MockParsedEventValidatorMockRecorder struct {
+	mock *MockParsedEventValidator
+}
+
+// NewMockParsedEventValidator creates a new mock instance.
+func NewMockParsedEventValidator(ctrl *gomock.Controller) *MockParsedEventValidator {
+	mock := &MockParsedEventValidator{ctrl: ctrl}
+	mock.recorder = &MockParsedEventValidatorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockParsedEventValidator) EXPECT() *MockParsedEventValidatorMockRecorder {
+	return m.recorder
+}
+
+// Validate mocks base method.
+func (m *MockParsedEventValidator) Validate(event domain.ParsedEvent) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Validate", event)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// Validate indicates an expected call of Validate.
+func (mr *MockParsedEventValidatorMockRecorder) Validate(event any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockParsedEventValidator)(nil).Validate), event)
+}

@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// TODO: remove EventParser from argument
-	app := application.New(config, infrastructure.EventParser{}, &infrastructure.TargetScriptListValidator{logger}, logger)
+	app := application.New(config, infrastructure.EventParser{}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, config}, logger)
 	logger.Debug("main", "app:", app)
 
 	event, err := app.ParseEvent()
