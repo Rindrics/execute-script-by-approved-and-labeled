@@ -20,7 +20,13 @@ func NewShellInvoker(logger *slog.Logger) ShellInvoker {
 }
 
 func (s ShellInvoker) executeShellScript(dir string, ts domain.TargetScript) error {
-	cmd := exec.Command("/bin/bash", path.Join(dir, string(ts)))
+	scriptType, _ := getScriptType(ts)
+
+	commandArgs := domain.ScriptCommandMapping[scriptType]
+	filePath := path.Join(dir, string(ts))
+	commandArgs = append(commandArgs, filePath)
+
+	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
 	s.Logger.Debug("infrastructure.ShellInvoker.executeShellScript", "cmd", cmd.String())
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

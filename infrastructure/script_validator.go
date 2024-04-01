@@ -19,7 +19,7 @@ func (slv *TargetScriptListValidator) Validate(list domain.TargetScriptList) boo
 	}
 
 	for _, script := range list.TargetScripts {
-		_, ok := getScriptType(string(script))
+		_, ok := getScriptType(script)
 		if !ok {
 			slv.Logger.Error("Unsupported script extension", "script", string(script))
 			return false
@@ -61,9 +61,9 @@ func (slv *TargetScriptListValidator) Validate(list domain.TargetScriptList) boo
 	return true
 }
 
-func getScriptType(fileName string) (domain.ScriptType, bool) {
+func getScriptType(fileName domain.TargetScript) (domain.ScriptType, bool) {
 	for ext, t := range domain.ScriptExtensionMapping {
-		if strings.HasSuffix(fileName, ext) {
+		if strings.HasSuffix(string(fileName), ext) {
 			return t, true
 		}
 	}

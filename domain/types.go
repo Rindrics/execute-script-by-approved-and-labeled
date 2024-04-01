@@ -48,3 +48,8 @@ var ScriptExtensionMapping = map[string]ScriptType{
 	".sh": Bash,
 	".py": Python,
 }
+
+var ScriptCommandMapping = map[ScriptType][]string{
+	Bash:   {"/bin/bash"},
+	Python: {"python"},
+}
