@@ -9,7 +9,7 @@ import (
 
 func TestExecute(t *testing.T) {
 	logger := NewLogger()
-	invoker := NewShellInvoker(logger)
+	invoker := NewInvoker(logger)
 
 	t.Run("run shell script", func(t *testing.T) {
 		err := invoker.Execute(domain.TargetScriptList{

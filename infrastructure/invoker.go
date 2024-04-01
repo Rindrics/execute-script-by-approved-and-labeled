@@ -9,17 +9,17 @@ import (
 	"github.com/Rindrics/execute-script-with-merge/domain"
 )
 
-type ShellInvoker struct {
+type Invoker struct {
 	Logger *slog.Logger
 }
 
-func NewShellInvoker(logger *slog.Logger) ShellInvoker {
-	return ShellInvoker{
+func NewInvoker(logger *slog.Logger) Invoker {
+	return Invoker{
 		Logger: logger,
 	}
 }
 
-func (s ShellInvoker) executeShellScript(dir string, ts domain.TargetScript) error {
+func (s Invoker) executeScript(dir string, ts domain.TargetScript) error {
 	scriptType, _ := getScriptType(ts)
 
 	commandArgs := domain.ScriptCommandMapping[scriptType]
@@ -27,7 +27,7 @@ func (s ShellInvoker) executeShellScript(dir string, ts domain.TargetScript) err
 	commandArgs = append(commandArgs, filePath)
 
 	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
-	s.Logger.Debug("infrastructure.ShellInvoker.executeShellScript", "cmd", cmd.String())
+	s.Logger.Debug("infrastructure.Invoker.executeScript", "cmd", cmd.String())
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return err
@@ -42,7 +42,7 @@ func (s ShellInvoker) executeShellScript(dir string, ts domain.TargetScript) err
 	if err != nil {
 		return err
 	}
-	s.Logger.Debug("infrastructure.ShellInvoker.executeShellScript", "output", string(output))
+	s.Logger.Debug("infrastructure.Invoker.executeScript", "output", string(output))
 
 	err = cmd.Wait()
 	if err != nil {
@@ -51,12 +51,12 @@ func (s ShellInvoker) executeShellScript(dir string, ts domain.TargetScript) err
 	return nil
 }
 
-func (s ShellInvoker) Execute(tsl domain.TargetScriptList) error {
-	s.Logger.Debug("infrastructure.ShellInvoker.Execute", "Directory:", tsl.Directory, "TargetScripts:", tsl.TargetScripts)
+func (s Invoker) Execute(tsl domain.TargetScriptList) error {
+	s.Logger.Debug("infrastructure.Invoker.Execute", "Directory:", tsl.Directory, "TargetScripts:", tsl.TargetScripts)
 
 	for _, ts := range tsl.TargetScripts {
-		s.Logger.Debug("infrastructure.ShellInvoker.Execute", "TargetScript:", ts)
-		err := s.executeShellScript(tsl.Directory, ts)
+		s.Logger.Debug("infrastructure.Invoker.Execute", "TargetScript:", ts)
+		err := s.executeScript(tsl.Directory, ts)
 		if err != nil {
 			return err
 		}

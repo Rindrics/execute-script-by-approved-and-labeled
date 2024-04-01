@@ -37,7 +37,7 @@ func TestMainValid(t *testing.T) {
 	// cannot assert result on test
 	app.ValidateTargetScripts()
 
-	err = app.Run(infrastructure.NewShellInvoker(logger))
+	err = app.Run(infrastructure.NewInvoker(logger))
 	if err != nil {
 		logger.Error("failed to run", "error", err)
 		t.Fatal(err)

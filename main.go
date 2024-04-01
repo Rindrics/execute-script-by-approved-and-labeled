@@ -33,7 +33,7 @@ func main() {
 		logger.Debug("main", "app.TargetScriptList", app.TargetScriptList)
 		if app.ValidateTargetScripts() {
 			logger.Info("executing TargetScriptList")
-			app.Run(infrastructure.NewShellInvoker(logger))
+			app.Run(infrastructure.NewInvoker(logger))
 		} else {
 			logger.Info("exit because TargetScriptList did not meet requirements")
 		}
