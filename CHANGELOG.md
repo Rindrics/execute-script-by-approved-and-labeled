@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.2](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.1...v0.0.2) - 2024-04-01
+- Correct input name by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/27
+
 ## [v0.0.1](https://github.com/Rindrics/execute-scripts-github-flow/commits/v0.0.1) - 2024-04-01
 - Define `LoadExecutionDirectiveList()` by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/5
 - Define `*App.Run()` to execute target script by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/6
