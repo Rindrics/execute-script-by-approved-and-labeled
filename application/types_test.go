@@ -12,12 +12,15 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func createApp(t *testing.T, parser domain.EventParser) *application.App {
+func createApp(t *testing.T, parser domain.EventParser, validator domain.TargetScriptListValidator) *application.App {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	if parser == nil {
 		parser = dmock.NewMockEventParser(ctrl)
+	}
+	if validator == nil {
+		validator = amock.NewMockTargetScriptListValidator(ctrl)
 	}
 	logger := infrastructure.NewLogger()
 
@@ -27,13 +30,13 @@ func createApp(t *testing.T, parser domain.EventParser) *application.App {
 		TargetScriptListDir: "../infrastructure/assets/",
 	}
 
-	app := application.New(config, parser, logger)
+	app := application.New(config, parser, validator, logger)
 
 	return app
 }
 
 func TestAppHasRequiredLabel(t *testing.T) {
-	app := createApp(t, nil)
+	app := createApp(t, nil, nil)
 
 	t.Run("HasRequiredLabel", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -51,7 +54,7 @@ func TestAppHasRequiredLabel(t *testing.T) {
 }
 
 func TestAppIsDefaultBranch(t *testing.T) {
-	app := createApp(t, nil)
+	app := createApp(t, nil, nil)
 
 	t.Run("IsDefaultBranch", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -72,7 +75,7 @@ func TestAppIsDefaultBranch(t *testing.T) {
 }
 
 func TestAppIsValid(t *testing.T) {
-	app := createApp(t, nil)
+	app := createApp(t, nil, nil)
 
 	t.Run("Valid", func(t *testing.T) {
 		event := domain.ParsedEvent{
@@ -110,7 +113,7 @@ func TestAppLoadTargetScriptList(t *testing.T) {
 	mockParser := dmock.NewMockEventParser(ctrl)
 	mockParser.EXPECT().ParseTargetScripts(domain.ParsedEvent{}, "../infrastructure/assets/").Return(expectedScripts, nil).Times(1)
 
-	app := createApp(t, mockParser)
+	app := createApp(t, mockParser, nil)
 
 	t.Run("LoadTargetScriptList", func(t *testing.T) {
 		err := app.LoadTargetScriptList(domain.ParsedEvent{})
@@ -120,8 +123,40 @@ func TestAppLoadTargetScriptList(t *testing.T) {
 	})
 }
 
+func TestAppValidateTargetScriptList(t *testing.T) {
+	t.Run("script exist", func(t *testing.T) {
+		validator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
+		validator.EXPECT().Validate(domain.TargetScriptList{
+			TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
+		}).Return(true).Times(1)
+
+		app := createApp(t, nil, validator)
+
+		app.TargetScriptList = domain.TargetScriptList{
+			TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
+		}
+
+		assert.True(t, app.ValidateTargetScripts())
+	})
+
+	t.Run("unknown script", func(t *testing.T) {
+		validator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
+		validator.EXPECT().Validate(domain.TargetScriptList{
+			TargetScripts: []domain.TargetScript{"foo.sh", "unknown.sh"},
+		}).Return(false).Times(1)
+
+		app := createApp(t, nil, validator)
+
+		app.TargetScriptList = domain.TargetScriptList{
+			TargetScripts: []domain.TargetScript{"foo.sh", "unknown.sh"},
+		}
+
+		assert.False(t, app.ValidateTargetScripts())
+	})
+}
+
 func TestAppRun(t *testing.T) {
-	app := createApp(t, nil)
+	app := createApp(t, nil, nil)
 
 	app.TargetScriptList = domain.TargetScriptList{
 		TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},

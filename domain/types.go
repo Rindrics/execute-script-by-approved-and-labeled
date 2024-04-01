@@ -32,3 +32,24 @@ type EventParser interface {
 	ParseEvent() (ParsedEvent, error)
 	ParseTargetScripts(ParsedEvent, string) ([]TargetScript, error)
 }
+
+type TargetScriptListValidator interface {
+	Validate(list TargetScriptList) bool
+}
+
+type ScriptType int
+
+const (
+	Bash ScriptType = iota
+	Python
+)
+
+var ScriptExtensionMapping = map[string]ScriptType{
+	".sh": Bash,
+	".py": Python,
+}
+
+var ScriptCommandMapping = map[ScriptType][]string{
+	Bash:   {"/bin/bash"},
+	Python: {"python"},
+}

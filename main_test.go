@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMainValidEvent(t *testing.T) {
+func TestMainValid(t *testing.T) {
 	os.Setenv("GITHUB_EVENT_PATH", "./infrastructure/pull_request.json")
 
 	config := application.Config{
@@ -18,7 +18,7 @@ func TestMainValidEvent(t *testing.T) {
 		TargetScriptListDir: "infrastructure/assets/",
 	}
 	logger := infrastructure.NewLogger()
-	app := application.New(config, infrastructure.EventParser{logger}, logger)
+	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()
@@ -33,7 +33,11 @@ func TestMainValidEvent(t *testing.T) {
 
 	app.LoadTargetScriptList(event)
 	logger.Debug("main", "app.TargetScriptList", app.TargetScriptList)
-	err = app.Run(infrastructure.NewShellInvoker(logger))
+
+	// cannot assert result on test
+	app.ValidateTargetScripts()
+
+	err = app.Run(infrastructure.NewInvoker(logger))
 	if err != nil {
 		logger.Error("failed to run", "error", err)
 		t.Fatal(err)
@@ -51,7 +55,7 @@ func TestMainInvalidEvent(t *testing.T) {
 		DefaultBranch:       "main",
 		TargetScriptListDir: "infrastructure/assets/",
 	}
-	app := application.New(config, infrastructure.EventParser{logger}, logger)
+	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()

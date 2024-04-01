@@ -14,18 +14,20 @@ type App struct {
 	Config           Config
 	TargetScriptList domain.TargetScriptList
 	Parser           domain.EventParser
+	Validator        domain.TargetScriptListValidator
 	Logger           Logger
 }
 
-func New(config Config, parser domain.EventParser, logger Logger) *App {
+func New(config Config, parser domain.EventParser, validator TargetScriptListValidator, logger Logger) *App {
 	logger.Debug("application.New", "config", config)
 	return &App{
 		Config: config,
 		TargetScriptList: domain.TargetScriptList{
 			Directory: config.TargetScriptListDir,
 		},
-		Parser: parser,
-		Logger: logger,
+		Parser:    parser,
+		Validator: validator,
+		Logger:    logger,
 	}
 }
 
@@ -39,6 +41,10 @@ func (a *App) IsValid(event domain.ParsedEvent) bool {
 		return true
 	}
 	return false
+}
+
+func (a *App) ValidateTargetScripts() bool {
+	return a.Validator.Validate(a.TargetScriptList)
 }
 
 func (a *App) HasRequiredLabel(event domain.ParsedEvent) bool {
@@ -87,4 +93,8 @@ type Logger interface {
 	Debug(string, ...any)
 	Info(string, ...any)
 	Error(string, ...any)
+}
+
+type TargetScriptListValidator interface {
+	Validate(list domain.TargetScriptList) bool
 }
