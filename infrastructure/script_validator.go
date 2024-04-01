@@ -19,6 +19,12 @@ func (slv *TargetScriptListValidator) Validate(list domain.TargetScriptList) boo
 	}
 
 	for _, script := range list.TargetScripts {
+		_, ok := getScriptType(string(script))
+		if !ok {
+			slv.Logger.Error("Unsupported script extension", "script", string(script))
+			return false
+		}
+
 		slv.Logger.Debug("infrastructure.TargetScriptListValidator.Validate", "validationTarget", list.Directory+string(script))
 		cmd := exec.Command("git", "ls-files", list.Directory+string(script))
 		stdout, err := cmd.StdoutPipe()
@@ -53,4 +59,13 @@ func (slv *TargetScriptListValidator) Validate(list domain.TargetScriptList) boo
 	}
 
 	return true
+}
+
+func getScriptType(fileName string) (domain.ScriptType, bool) {
+	for ext, t := range domain.ScriptExtensionMapping {
+		if strings.HasSuffix(fileName, ext) {
+			return t, true
+		}
+	}
+	return 0, false // unsupported extension
 }

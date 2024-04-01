@@ -39,6 +39,16 @@ func TestScriptListValidatorValidate(t *testing.T) {
 		}))
 	})
 
+	t.Run("unsupported extension", func(t *testing.T) {
+		assert.False(t, validator.Validate(domain.TargetScriptList{
+			TargetScripts: []domain.TargetScript{
+				"foo.sh",
+				"baz.unsupported",
+			},
+			Directory: "assets/",
+		}))
+	})
+
 	t.Run("no script given", func(t *testing.T) {
 		assert.False(t, validator.Validate(domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{},
