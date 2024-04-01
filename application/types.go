@@ -14,22 +14,22 @@ type App struct {
 	Config           Config
 	TargetScriptList domain.TargetScriptList
 	Parser           domain.EventParser
-	Validator        TargetScriptListValidator
+	ScriptValidator  TargetScriptListValidator
 	EventValidator   ParsedEventValidator
 	Logger           Logger
 }
 
-func New(config Config, parser domain.EventParser, validator TargetScriptListValidator, eventValidator ParsedEventValidator, logger Logger) *App {
+func New(config Config, parser domain.EventParser, scriptValidator TargetScriptListValidator, eventValidator ParsedEventValidator, logger Logger) *App {
 	logger.Debug("application.New", "config", config)
 	return &App{
 		Config: config,
 		TargetScriptList: domain.TargetScriptList{
 			Directory: config.TargetScriptListDir,
 		},
-		Parser:         parser,
-		Validator:      validator,
-		EventValidator: eventValidator,
-		Logger:         logger,
+		Parser:          parser,
+		ScriptValidator: scriptValidator,
+		EventValidator:  eventValidator,
+		Logger:          logger,
 	}
 }
 
@@ -43,7 +43,7 @@ func (a *App) IsValid(event domain.ParsedEvent) bool {
 }
 
 func (a *App) ValidateTargetScripts() bool {
-	return a.Validator.Validate(a.TargetScriptList)
+	return a.ScriptValidator.Validate(a.TargetScriptList)
 }
 
 func (a *App) LoadTargetScripts(event domain.ParsedEvent) error {

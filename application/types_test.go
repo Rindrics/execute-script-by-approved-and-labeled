@@ -12,12 +12,12 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func createApp(t *testing.T, ctrl *gomock.Controller, parser domain.EventParser, validator application.TargetScriptListValidator, eventValidator application.ParsedEventValidator) *application.App {
+func createApp(t *testing.T, ctrl *gomock.Controller, parser domain.EventParser, scriptValidator application.TargetScriptListValidator, eventValidator application.ParsedEventValidator) *application.App {
 	if parser == nil {
 		parser = dmock.NewMockEventParser(ctrl)
 	}
-	if validator == nil {
-		validator = amock.NewMockTargetScriptListValidator(ctrl)
+	if scriptValidator == nil {
+		scriptValidator = amock.NewMockTargetScriptListValidator(ctrl)
 	}
 	if eventValidator == nil {
 		eventValidator = amock.NewMockParsedEventValidator(ctrl)
@@ -30,7 +30,7 @@ func createApp(t *testing.T, ctrl *gomock.Controller, parser domain.EventParser,
 		TargetScriptListDir: "../infrastructure/assets/",
 	}
 
-	app := application.New(config, parser, validator, eventValidator, logger)
+	app := application.New(config, parser, scriptValidator, eventValidator, logger)
 
 	return app
 }
@@ -97,12 +97,12 @@ func TestAppValidateTargetScriptList(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		validator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
-		validator.EXPECT().Validate(domain.TargetScriptList{
+		scriptValidator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
+		scriptValidator.EXPECT().Validate(domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
 		}).Return(true).Times(1)
 
-		app := createApp(t, ctrl, nil, validator, nil)
+		app := createApp(t, ctrl, nil, scriptValidator, nil)
 
 		app.TargetScriptList = domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "bar.sh"},
@@ -115,12 +115,12 @@ func TestAppValidateTargetScriptList(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		validator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
-		validator.EXPECT().Validate(domain.TargetScriptList{
+		scriptValidator := amock.NewMockTargetScriptListValidator(gomock.NewController(t))
+		scriptValidator.EXPECT().Validate(domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "unknown.sh"},
 		}).Return(false).Times(1)
 
-		app := createApp(t, ctrl, nil, validator, nil)
+		app := createApp(t, ctrl, nil, scriptValidator, nil)
 
 		app.TargetScriptList = domain.TargetScriptList{
 			TargetScripts: []domain.TargetScript{"foo.sh", "unknown.sh"},
