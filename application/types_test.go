@@ -24,9 +24,9 @@ func createApp(t *testing.T, ctrl *gomock.Controller, parser domain.EventParser,
 	}
 	logger := infrastructure.NewLogger()
 
-	config := application.Config{
+	config := &application.Config{
 		RequiredLabel:       "required-label",
-		DefaultBranch:       "main",
+		BaseBranch:          "main",
 		TargetScriptListDir: "../infrastructure/assets/",
 	}
 

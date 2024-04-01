@@ -18,8 +18,8 @@ func (pev *ParsedEventValidator) Validate(event domain.ParsedEvent) bool {
 		return false
 	}
 
-	if !doMatchDefaultBranch(event, pev.Config.DefaultBranch) {
-		pev.Logger.Error("default branch did not match", "event", event)
+	if !doMatchBaseBranch(event, pev.Config.BaseBranch) {
+		pev.Logger.Error("base branch did not match", "event", event)
 		return false
 	}
 
@@ -42,7 +42,7 @@ func doExistRequiredLabel(event domain.ParsedEvent, label string) bool {
 	return false
 }
 
-func doMatchDefaultBranch(event domain.ParsedEvent, branch string) bool {
+func doMatchBaseBranch(event domain.ParsedEvent, branch string) bool {
 	return event.Branches.Base == branch
 }
 

@@ -1,0 +1,16 @@
+name: 'Execute Scripts GitHub Flow'
+description: 'Execute scripts in target file list when the labeled pull request is merged'
+inputs:
+  requiredLabel:
+    description: 'Required labels to execute script on merge'
+    required: true
+  defaultBranch:
+    description: 'Execute script if the base branch of the pull request matches with this value'
+    default: 'main'
+    required: false
+  targetScriptListDir:
+    description: 'Directory that contains target script list'
+    required: true
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/rindrics/execute-scripts-github-flow:v0.0.0'
