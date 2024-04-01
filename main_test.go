@@ -13,9 +13,9 @@ func TestMainValidEvent(t *testing.T) {
 	os.Setenv("GITHUB_EVENT_PATH", "./infrastructure/pull_request.json")
 
 	config := application.Config{
-		RequiredLabel:             "test-label",
-		DefaultBranch:             "main",
-		ExecutionDirectiveListDir: "infrastructure/assets/",
+		RequiredLabel:       "test-label",
+		DefaultBranch:       "main",
+		TargetScriptListDir: "infrastructure/assets/",
 	}
 	logger := infrastructure.NewLogger()
 	app := application.New(config, infrastructure.EventParser{logger}, logger)
@@ -31,7 +31,7 @@ func TestMainValidEvent(t *testing.T) {
 
 	assert.True(t, app.IsValid(event))
 
-	app.LoadExecutionDirectiveList(event)
+	app.LoadTargetScriptList(event)
 	logger.Debug("main", "app.TargetScriptList", app.TargetScriptList)
 	err = app.Run(infrastructure.NewShellInvoker(logger))
 	if err != nil {
@@ -47,9 +47,9 @@ func TestMainInvalidEvent(t *testing.T) {
 
 	logger := infrastructure.NewLogger()
 	config := application.Config{
-		RequiredLabel:             "test-label",
-		DefaultBranch:             "main",
-		ExecutionDirectiveListDir: "infrastructure/assets/",
+		RequiredLabel:       "test-label",
+		DefaultBranch:       "main",
+		TargetScriptListDir: "infrastructure/assets/",
 	}
 	app := application.New(config, infrastructure.EventParser{logger}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
