@@ -14,6 +14,10 @@ type ScriptListValidator struct {
 }
 
 func (slv *ScriptListValidator) Validate(list domain.TargetScriptList) bool {
+	if len(list.TargetScripts) == 0 {
+		return false
+	}
+
 	for _, script := range list.TargetScripts {
 		slv.Logger.Debug("infrastructure.ScriptListValidator.Validate", "validationTarget", list.Directory+string(script))
 		cmd := exec.Command("git", "ls-files", list.Directory+string(script))
