@@ -18,4 +18,14 @@ func TestScriptListValidatorValidate(t *testing.T) {
 			Directory: "assets/",
 		}))
 	})
+
+	t.Run("scripts exist", func(t *testing.T) {
+		assert.True(t, validator.Validate(domain.TargetScriptList{
+			TargetScripts: []domain.TargetScript{
+				"foo.sh",
+				"bar.sh",
+			},
+			Directory: "assets/",
+		}))
+	})
 }

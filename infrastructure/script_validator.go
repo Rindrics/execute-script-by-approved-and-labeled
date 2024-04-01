@@ -42,11 +42,11 @@ func (slv *ScriptListValidator) Validate(list domain.TargetScriptList) bool {
 			return false
 		}
 
-		// If the output is not empty, the script exists in the git index
-		if strings.TrimSpace(string(output)) != "" {
-			return true
+		// If the output is empty, the script does not exist in the git index
+		if strings.TrimSpace(string(output)) == "" {
+			return false
 		}
 	}
 
-	return false
+	return true
 }
