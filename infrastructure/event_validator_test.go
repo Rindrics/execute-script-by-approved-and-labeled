@@ -14,7 +14,7 @@ func TestParsedEventValidator_Validate(t *testing.T) {
 			Logger: NewLogger(),
 			Config: application.Config{
 				RequiredLabel: "required-label",
-				DefaultBranch: "main",
+				BaseBranch:    "main",
 			},
 		}
 
@@ -32,7 +32,7 @@ func TestParsedEventValidator_Validate(t *testing.T) {
 			Logger: NewLogger(),
 			Config: application.Config{
 				RequiredLabel: "required-label",
-				DefaultBranch: "main",
+				BaseBranch:    "main",
 			},
 		}
 
@@ -45,12 +45,12 @@ func TestParsedEventValidator_Validate(t *testing.T) {
 		}))
 	})
 
-	t.Run("default branch did not match", func(t *testing.T) {
+	t.Run("base branch did not match", func(t *testing.T) {
 		validator := ParsedEventValidator{
 			Logger: NewLogger(),
 			Config: application.Config{
 				RequiredLabel: "required-label",
-				DefaultBranch: "main",
+				BaseBranch:    "main",
 			},
 		}
 
@@ -68,7 +68,7 @@ func TestParsedEventValidator_Validate(t *testing.T) {
 			Logger: NewLogger(),
 			Config: application.Config{
 				RequiredLabel: "required-label",
-				DefaultBranch: "main",
+				BaseBranch:    "main",
 			},
 		}
 

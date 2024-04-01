@@ -5,20 +5,24 @@ import (
 	"testing"
 
 	"github.com/Rindrics/execute-script-with-merge/application"
+	"github.com/Rindrics/execute-script-with-merge/domain"
 	"github.com/Rindrics/execute-script-with-merge/infrastructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMainValid(t *testing.T) {
-	os.Setenv("GITHUB_EVENT_PATH", "./infrastructure/pull_request.json")
+	os.Setenv(domain.EnvVarGitHubEventPath, "./infrastructure/pull_request.json")
+	os.Setenv(domain.EnvVarRequiredLabel, "test-label")
+	os.Setenv(domain.EnvVarBaseBranch, "main")
+	os.Setenv(domain.EnvVarTargetScriptListDir, "infrastructure/assets")
 
-	config := application.Config{
-		RequiredLabel:       "test-label",
-		DefaultBranch:       "main",
-		TargetScriptListDir: "infrastructure/assets/",
+	config, err := infrastructure.LoadConfig()
+	if err != nil {
+		t.Fatal(err)
 	}
+
 	logger := infrastructure.NewLogger()
-	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, config}, logger)
+	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()
@@ -43,19 +47,21 @@ func TestMainValid(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	os.Unsetenv("GITHUB_EVENT_PATH")
+	os.Unsetenv(domain.EnvVarGitHubEventPath)
+	os.Unsetenv(domain.EnvVarRequiredLabel)
+	os.Unsetenv(domain.EnvVarBaseBranch)
+	os.Unsetenv(domain.EnvVarTargetScriptListDir)
 }
 
 func TestMainInvalidEvent(t *testing.T) {
-	os.Setenv("GITHUB_EVENT_PATH", "./infrastructure/pull_request_opened.json")
+	os.Setenv(domain.EnvVarGitHubEventPath, "./infrastructure/pull_request_opened.json")
+	os.Setenv(domain.EnvVarRequiredLabel, "test-label")
+	os.Setenv(domain.EnvVarBaseBranch, "main")
+	os.Setenv(domain.EnvVarTargetScriptListDir, "infrastructure/assets")
 
 	logger := infrastructure.NewLogger()
-	config := application.Config{
-		RequiredLabel:       "test-label",
-		DefaultBranch:       "main",
-		TargetScriptListDir: "infrastructure/assets/",
-	}
-	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, config}, logger)
+	config, err := infrastructure.LoadConfig()
+	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()
@@ -68,5 +74,8 @@ func TestMainInvalidEvent(t *testing.T) {
 
 	assert.False(t, app.IsValid(event))
 
-	os.Unsetenv("GITHUB_EVENT_PATH")
+	os.Unsetenv(domain.EnvVarGitHubEventPath)
+	os.Unsetenv(domain.EnvVarRequiredLabel)
+	os.Unsetenv(domain.EnvVarBaseBranch)
+	os.Unsetenv(domain.EnvVarTargetScriptListDir)
 }

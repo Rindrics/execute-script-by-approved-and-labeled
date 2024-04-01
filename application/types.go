@@ -6,7 +6,7 @@ import (
 
 type Config struct {
 	RequiredLabel       string
-	DefaultBranch       string
+	BaseBranch          string
 	TargetScriptListDir string
 }
 
@@ -19,10 +19,10 @@ type App struct {
 	Logger           Logger
 }
 
-func New(config Config, parser domain.EventParser, scriptValidator TargetScriptListValidator, eventValidator ParsedEventValidator, logger Logger) *App {
-	logger.Debug("application.New", "config", config)
+func New(config *Config, parser domain.EventParser, scriptValidator TargetScriptListValidator, eventValidator ParsedEventValidator, logger Logger) *App {
+	logger.Debug("application.New", "config", *config)
 	return &App{
-		Config: config,
+		Config: *config,
 		TargetScriptList: domain.TargetScriptList{
 			Directory: config.TargetScriptListDir,
 		},

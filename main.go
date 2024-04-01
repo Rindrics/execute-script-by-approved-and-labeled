@@ -10,15 +10,13 @@ func main() {
 
 	logger.Info("starting application")
 
-	// TODO: load config from environment variables
-	config := application.Config{
-		RequiredLabel:       "test-label",
-		DefaultBranch:       "main",
-		TargetScriptListDir: "infrastructure/assets/",
+	config, err := infrastructure.LoadConfig()
+	if err != nil {
+		logger.Error("failed to load config", "error", err)
+		return
 	}
-
 	// TODO: remove EventParser from argument
-	app := application.New(config, infrastructure.EventParser{}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, config}, logger)
+	app := application.New(config, infrastructure.EventParser{}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
 	logger.Debug("main", "app:", app)
 
 	event, err := app.ParseEvent()

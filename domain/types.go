@@ -41,3 +41,10 @@ var ScriptCommandMapping = map[ScriptType][]string{
 	Bash:   {"/bin/bash"},
 	Python: {"python"},
 }
+
+const (
+	EnvVarGitHubEventPath     string = "GITHUB_EVENT_PATH"
+	EnvVarRequiredLabel       string = "INPUT_REQUIREDLABEL"
+	EnvVarBaseBranch          string = "INPUT_BASEBRANCH"
+	EnvVarTargetScriptListDir string = "INPUT_TARGETSCRIPTLISTDIR"
+)
