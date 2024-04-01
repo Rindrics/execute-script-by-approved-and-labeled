@@ -9,17 +9,17 @@ import (
 	"github.com/Rindrics/execute-script-with-merge/domain"
 )
 
-type ScriptListValidator struct {
+type TargetScriptListValidator struct {
 	Logger *slog.Logger
 }
 
-func (slv *ScriptListValidator) Validate(list domain.TargetScriptList) bool {
+func (slv *TargetScriptListValidator) Validate(list domain.TargetScriptList) bool {
 	if len(list.TargetScripts) == 0 {
 		return false
 	}
 
 	for _, script := range list.TargetScripts {
-		slv.Logger.Debug("infrastructure.ScriptListValidator.Validate", "validationTarget", list.Directory+string(script))
+		slv.Logger.Debug("infrastructure.TargetScriptListValidator.Validate", "validationTarget", list.Directory+string(script))
 		cmd := exec.Command("git", "ls-files", list.Directory+string(script))
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
@@ -38,7 +38,7 @@ func (slv *ScriptListValidator) Validate(list domain.TargetScriptList) bool {
 			slv.Logger.Error("ValidateScriptInGitIndex", "Failed to read output of git ls-files command", err)
 			return false
 		}
-		slv.Logger.Debug("infrastructure.ScriptListValidator.Validate", "output", string(output))
+		slv.Logger.Debug("infrastructure.TargetScriptListValidator.Validate", "output", string(output))
 
 		err = cmd.Wait()
 		if err != nil {

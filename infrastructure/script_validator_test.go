@@ -8,7 +8,7 @@ import (
 )
 
 func TestScriptListValidatorValidate(t *testing.T) {
-	validator := ScriptListValidator{NewLogger()}
+	validator := TargetScriptListValidator{NewLogger()}
 
 	t.Run("a script exists", func(t *testing.T) {
 		assert.True(t, validator.Validate(domain.TargetScriptList{
