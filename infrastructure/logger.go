@@ -4,10 +4,12 @@ import (
 	"os"
 
 	"log/slog"
+
+	"github.com/Rindrics/execute-script-with-merge/domain"
 )
 
 func NewLogger() *slog.Logger {
-	l := os.Getenv("LOG_LEVEL")
+	l := os.Getenv(domain.EnvVarLogLevel)
 
 	var ll slog.Level
 	switch l {
