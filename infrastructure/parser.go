@@ -19,9 +19,9 @@ type EventParser struct {
 }
 
 func parsePullRequestEvent() (*github.PullRequestEvent, error) {
-	eventPath := os.Getenv("GITHUB_EVENT_PATH")
+	eventPath := os.Getenv(domain.EnvVarGitHubEventPath)
 	if eventPath == "" {
-		return nil, fmt.Errorf("GITHUB_EVENT_PATH environment variable not set")
+		return nil, fmt.Errorf("%s environment variable not set", domain.EnvVarGitHubEventPath)
 	}
 
 	data, err := ioutil.ReadFile(eventPath)
