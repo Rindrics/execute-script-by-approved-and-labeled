@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.4](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.3...v0.0.4) - 2024-04-02
+- Pass missed logger for `application.New()` by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/32
+
 ## [v0.0.3](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.2...v0.0.3) - 2024-04-02
 - Log `main.go` for debugging by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/30
 
