@@ -1,16 +1,23 @@
 package main
 
 import (
+	"os"
+
 	"github.com/Rindrics/execute-script-with-merge/application"
+	"github.com/Rindrics/execute-script-with-merge/domain"
 	"github.com/Rindrics/execute-script-with-merge/infrastructure"
 )
 
 func main() {
+	os.Setenv(domain.EnvVarLogLevel, "debug")
 	logger := infrastructure.NewLogger()
 
 	logger.Info("starting application")
 
+	logger.Debug("main", "event path", os.Getenv(domain.EnvVarGitHubEventPath))
+
 	config, err := infrastructure.LoadConfig()
+	logger.Debug("main", "config", *config)
 	if err != nil {
 		logger.Error("failed to load config", "error", err)
 		return
