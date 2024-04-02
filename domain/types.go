@@ -44,6 +44,7 @@ var ScriptCommandMapping = map[ScriptType][]string{
 
 const (
 	EnvVarGitHubEventPath     string = "GITHUB_EVENT_PATH"
+	EnvVarLogLevel            string = "LOG_LEVEL"
 	EnvVarRequiredLabel       string = "INPUT_REQUIREDLABEL"
 	EnvVarBaseBranch          string = "INPUT_BASEBRANCH"
 	EnvVarTargetScriptListDir string = "INPUT_TARGETSCRIPTLISTDIR"
