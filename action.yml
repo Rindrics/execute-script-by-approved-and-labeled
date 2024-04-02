@@ -13,4 +13,4 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/rindrics/execute-scripts-github-flow:v0.0.2'
+  image: 'docker://ghcr.io/rindrics/execute-scripts-github-flow:v0.0.3'
