@@ -12,29 +12,5 @@ inputs:
     description: 'Directory that contains target script list'
     required: true
 runs:
-  using: 'composite'
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: See Directory
-      run: ls
-      shell: bash
-
-    - name: Set GitHub Path
-      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
-
-    - name: See Directory
-      run: ls
-      shell: bash
-
-    - name: Execute
-      run: make run
-      shell: bash
-      env:
-        INPUT_REQUIREDLABEL: ${{ inputs.requiredLabel }}
-        INPUT_BASEBRANCH: ${{ inputs.baseBranch }}
-        INPUT_TARGETSCRIPTLISTDIR: ${{ inputs.targetScriptListDir }}
+  using: 'docker'
+  image: 'docker://ghcr.io/rindrics/execute-scripts-github-flow:v0.0.4'

@@ -4,10 +4,6 @@ LOG_LEVEL ?= info
 build:
 	go build -o dist/ ./...
 
-.PHONY: run
-build:
-	go run main.go
-
 .PHONY: clean
 clean:
 	go clean -testcache
