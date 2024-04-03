@@ -11,7 +11,7 @@ FROM alpine:3.19
 
 LABEL org.opencontainers.image.source="https://github.com/Rindrics/execute-scripts-github-flow"
 
-RUN apk update && apk --no-cache add ca-certificates
+RUN apk update && apk --no-cache add ca-certificates git
 
 COPY --from=builder /dist/app /app
 
