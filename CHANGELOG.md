@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.6](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.5...v0.0.6) - 2024-04-03
+- Include `git` executable in image to ensure application works by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/37
+
 ## [v0.0.5](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.4...v0.0.5) - 2024-04-03
 - Echo $PATH by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/35
 
