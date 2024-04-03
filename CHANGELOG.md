@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.8](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.7...v0.0.8) - 2024-04-03
+- See path from infrastructure by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/42
+
 ## [v0.0.7](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.6...v0.0.7) - 2024-04-03
 - Cleanse `main.go` to finish debugging by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/39
 
