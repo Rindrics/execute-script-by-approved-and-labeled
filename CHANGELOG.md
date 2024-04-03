@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.9](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.8...v0.0.9) - 2024-04-03
+- Log command steps for debugging by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/45
+
 ## [v0.0.8](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.7...v0.0.8) - 2024-04-03
 - See path from infrastructure by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/42
 
