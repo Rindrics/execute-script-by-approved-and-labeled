@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.5](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.4...v0.0.5) - 2024-04-03
+- Echo $PATH by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/35
+
 ## [v0.0.4](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.3...v0.0.4) - 2024-04-02
 - Pass missed logger for `application.New()` by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/32
 
