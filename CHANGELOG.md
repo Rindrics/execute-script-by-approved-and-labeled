@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.7](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.6...v0.0.7) - 2024-04-03
+- Cleanse `main.go` to finish debugging by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/39
+
 ## [v0.0.6](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.5...v0.0.6) - 2024-04-03
 - Include `git` executable in image to ensure application works by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/37
 
