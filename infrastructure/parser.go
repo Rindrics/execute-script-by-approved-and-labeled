@@ -87,43 +87,60 @@ func getGitDiff(base, head, targetFile string, logger *slog.Logger) (*diffparser
 	// TODO:
 	// - define application.Config.ExecutionDirectiveListDir as new type
 	// - define Validate() to check whether it exists in git index
-	ls, err := exec.Command("ls", "-al", targetFile).Output()
-	fmt.Printf("ls:\n%s :Error:\n%v\n", ls, err)
+	output, err := ExecuteCommandWithLogging(logger, "ls", "-al", targetFile)
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
+	}
+	logger.Debug("infrastructure.getGitDiff", "output", output)
 
-	branch, err := exec.Command("git", "branch").Output()
-	fmt.Printf("branch:\n%s :Error:\n%v\n", branch, err)
+	output, err = ExecuteCommandWithLogging(logger, "git", "branch")
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
+	}
+	logger.Debug("infrastructure.getGitDiff", "output", output)
 
-	show, err := exec.Command("git", "show").Output()
-	fmt.Printf("show:\n%s :Error:\n%v\n", show, err)
+	output, err = ExecuteCommandWithLogging(logger, "git", "show")
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
+	}
+	logger.Debug("infrastructure.getGitDiff", "output", output)
 
-	cmd := exec.Command("git", "diff", "--no-color", base+".."+head, "--", targetFile)
-	logger.Debug("infrastructure.getGitDiff", "cmd", cmd.String())
+	output, err = ExecuteCommandWithLogging(logger, "git", "diff", "--no-color", base+".."+head, "--", targetFile)
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
+	}
+	logger.Debug("infrastructure.getGitDiff", "output", output)
+
+	return diffparser.Parse(string(output))
+}
+
+func ExecuteCommandWithLogging(logger *slog.Logger, command string, args ...string) (string, error) {
+	cmd := exec.Command(command, args...)
+	logger.Debug("infrastructure.ExecuteCommandWithLogging", "cmd", cmd.String())
+
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
-		return &diffparser.Diff{}, err
+		return "", err
 	}
 
-	err = cmd.Start()
-	if err != nil {
-		logger.Error("infrastructure.getGitDiff", "cmd.Start() failed with", err)
-		return &diffparser.Diff{}, err
+	if err := cmd.Start(); err != nil {
+		logger.Debug("infrastructure.ExecuteCommandWithLogging", "cmd.Start() failed with", err)
+		return "", err
 	}
 
 	output, err := ioutil.ReadAll(stdout)
-	logger.Debug("infrastructure.getGitDiff", "output", string(output))
 	if err != nil {
-		logger.Error("infrastructure.getGitDiff", "ReadAll failed with", err)
-		return &diffparser.Diff{}, err
+		logger.Debug("infrastructure.ExecuteCommandWithLogging", "ReadAll() failed with", err)
+		return "", err
 	}
 
-	err = cmd.Wait()
-	if err != nil {
-		logger.Error("infrastructure.getGitDiff", "cmd.Run() failed with", err)
-		return &diffparser.Diff{}, err
+	if err := cmd.Wait(); err != nil {
+		logger.Debug("infrastructure.ExecuteCommandWithLogging", "cmd.Run() failed with", err)
+		return "", err
 	}
 
-	return diffparser.Parse(string(output))
+	return string(output), nil
 }
 
 func parseTargetScriptsFromGitDiff(diff *diffparser.Diff, logger *slog.Logger) []domain.TargetScript {
