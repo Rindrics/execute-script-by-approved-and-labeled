@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/Rindrics/execute-script-with-merge/application"
 	"github.com/Rindrics/execute-script-with-merge/domain"
@@ -13,6 +15,14 @@ func main() {
 	logger := infrastructure.NewLogger()
 
 	logger.Info("starting application")
+
+	logger.Debug("main", "path", os.Getenv("PATH"))
+
+	echo, err := exec.Command("echo", "$PATH").Output()
+	fmt.Printf("echo:\n%s :Error:\n%v\n", echo, err)
+
+	git, err := exec.Command("git", "--version").Output()
+	fmt.Printf("git:\n%s :Error:\n%v\n", git, err)
 
 	logger.Debug("main", "event path", os.Getenv(domain.EnvVarGitHubEventPath))
 
