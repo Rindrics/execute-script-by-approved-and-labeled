@@ -10,11 +10,14 @@ import (
 	"os/exec"
 
 	"github.com/Rindrics/execute-script-with-merge/domain"
+	git "github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/google/go-github/github"
 	"github.com/waigani/diffparser"
 )
 
 type EventParser struct {
+	Url    string
 	Logger *slog.Logger
 }
 
@@ -73,7 +76,7 @@ func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
 
 func (e EventParser) ParseTargetScripts(pe domain.ParsedEvent, tslPath string) ([]domain.TargetScript, error) {
 	e.Logger.Debug("infrastructure.ParseTargetScripts", "head", pe.Branches.Head, "base", pe.Branches.Base)
-	diff, err := getGitDiff(pe.Branches.Base, pe.Branches.Head, tslPath, e.Logger)
+	diff, err := getGitDiff(e.Url, pe.Branches.Base, pe.Branches.Head, tslPath, e.Logger)
 	if err != nil {
 		return []domain.TargetScript{}, err
 	}
@@ -83,7 +86,22 @@ func (e EventParser) ParseTargetScripts(pe domain.ParsedEvent, tslPath string) (
 	return ts, nil
 }
 
-func getGitDiff(base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
+func getGitDiff(url, base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
+	logger.Info("infrastructure.getGitDiff", "cloning", url)
+	dir, err := os.MkdirTemp("", "clone-example")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer os.RemoveAll(dir)
+
+	repo, err := git.PlainClone(dir, false, &git.CloneOptions{
+		URL: "https://github.com/git-fixtures/basic.git",
+		Auth: &http.BasicAuth{
+			Username: "abc123", // anything except an empty string
+			Password: "github_access_token",
+		},
+	})
 	// TODO:
 	// - define application.Config.ExecutionDirectiveListDir as new type
 	// - define Validate() to check whether it exists in git index
@@ -93,11 +111,11 @@ func getGitDiff(base, head, targetFile string, logger *slog.Logger) (*diffparser
 	}
 	logger.Debug("infrastructure.getGitDiff", "output", output)
 
-	output, err = ExecuteCommandWithLogging(logger, "git", "branch")
+	branches, err := repo.Branches()
 	if err != nil {
-		logger.Error("infrastructure.getGitDiff", "failed with", err)
+		logger.Error("infrastructure.getGitDiff", "repo.Branches() fails with:", err)
 	}
-	logger.Debug("infrastructure.getGitDiff", "output", output)
+	logger.Debug("infrastructure.getGitDiff", "branches", branches)
 
 	output, err = ExecuteCommandWithLogging(logger, "git", "show")
 	if err != nil {
