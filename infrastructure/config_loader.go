@@ -9,6 +9,11 @@ import (
 )
 
 func LoadConfig() (*application.Config, error) {
+	token := os.Getenv(domain.EnvVarToken)
+	if token == "" {
+		return nil, fmt.Errorf("environment variable %s is required", domain.EnvVarToken)
+	}
+
 	requiredLabel := os.Getenv(domain.EnvVarRequiredLabel)
 	if requiredLabel == "" {
 		return nil, fmt.Errorf("environment variable %s is required", domain.EnvVarRequiredLabel)
@@ -25,6 +30,7 @@ func LoadConfig() (*application.Config, error) {
 	}
 
 	return &application.Config{
+		Token:               token,
 		RequiredLabel:       requiredLabel,
 		BaseBranch:          baseBranch,
 		TargetScriptListDir: targetScriptListDir,

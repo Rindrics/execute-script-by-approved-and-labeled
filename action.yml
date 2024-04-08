@@ -1,6 +1,9 @@
 name: 'Execute Scripts GitHub Flow'
 description: 'Execute scripts in target file list when the labeled pull request is merged'
 inputs:
+  token:
+    description: 'Token string to use GitHub API'
+    required: true
   requiredLabel:
     description: 'Required labels to execute script on merge'
     required: true

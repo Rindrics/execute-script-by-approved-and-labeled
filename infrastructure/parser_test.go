@@ -41,7 +41,10 @@ func TestParseTargetScripts(t *testing.T) {
 		},
 	}
 
-	parser := EventParser{"https://github.com/Rindrics/execute-scripts-github-flow.git", NewLogger()}
+	parser := EventParser{
+		"https://github.com/Rindrics/execute-scripts-github-flow.git",
+		"token",
+		NewLogger()}
 	ed, err := parser.ParseTargetScripts(pe, "assets/target_script_list.txt")
 	if err != nil {
 		t.Fatal(err)
@@ -52,7 +55,14 @@ func TestParseTargetScripts(t *testing.T) {
 }
 
 func TestGetGitDiff(t *testing.T) {
-	diff, err := getGitDiff("https://github.com/Rindrics/execute-scripts-github-flow.git", "origin/main", "origin/branch-for-test", "assets/target_script_list.txt", NewLogger())
+	diff, err := getGitDiff(
+		"https://github.com/Rindrics/execute-scripts-github-flow.git",
+		"token",
+		"origin/main",
+		"origin/branch-for-test",
+		"assets/target_script_list.txt",
+		NewLogger(),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}

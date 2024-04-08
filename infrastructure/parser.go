@@ -18,6 +18,7 @@ import (
 
 type EventParser struct {
 	Url    string
+	Token  string
 	Logger *slog.Logger
 }
 
@@ -76,7 +77,7 @@ func (e EventParser) ParseEvent() (domain.ParsedEvent, error) {
 
 func (e EventParser) ParseTargetScripts(pe domain.ParsedEvent, tslPath string) ([]domain.TargetScript, error) {
 	e.Logger.Debug("infrastructure.ParseTargetScripts", "head", pe.Branches.Head, "base", pe.Branches.Base)
-	diff, err := getGitDiff(e.Url, pe.Branches.Base, pe.Branches.Head, tslPath, e.Logger)
+	diff, err := getGitDiff(e.Url, e.Token, pe.Branches.Base, pe.Branches.Head, tslPath, e.Logger)
 	if err != nil {
 		return []domain.TargetScript{}, err
 	}
@@ -86,7 +87,7 @@ func (e EventParser) ParseTargetScripts(pe domain.ParsedEvent, tslPath string) (
 	return ts, nil
 }
 
-func getGitDiff(url, base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
+func getGitDiff(url, token, base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
 	logger.Info("infrastructure.getGitDiff", "cloning", url)
 	dir, err := os.MkdirTemp("", "clone-example")
 	if err != nil {
@@ -98,8 +99,8 @@ func getGitDiff(url, base, head, targetFile string, logger *slog.Logger) (*diffp
 	repo, err := git.PlainClone(dir, false, &git.CloneOptions{
 		URL: "https://github.com/git-fixtures/basic.git",
 		Auth: &http.BasicAuth{
-			Username: "abc123", // anything except an empty string
-			Password: "github_access_token",
+			Username: "execute-script-with-merge",
+			Password: token,
 		},
 	})
 	// TODO:
