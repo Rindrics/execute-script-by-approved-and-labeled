@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.10](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.9...v0.0.10) - 2024-04-08
+- Clone repo using `go-git/go-git` to try to resolve error by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/47
+
 ## [v0.0.9](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.8...v0.0.9) - 2024-04-03
 - Log command steps for debugging by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/45
 
