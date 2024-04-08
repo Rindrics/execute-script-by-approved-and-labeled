@@ -91,7 +91,7 @@ func getGitDiff(url, token, base, head, targetFile string, logger *slog.Logger) 
 	logger.Info("infrastructure.getGitDiff", "cloning", url)
 	dir, err := os.MkdirTemp("", "tempdir")
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
 	}
 
 	defer os.RemoveAll(dir)
