@@ -12,7 +12,8 @@ import (
 
 func TestMainValid(t *testing.T) {
 	os.Setenv(domain.EnvVarGitHubEventPath, "./infrastructure/pull_request.json")
-	os.Setenv(domain.EnvVarGitHubRepositoryUrl, "https://github.com/Rindrics/execute-scripts-github-flow.git")
+	os.Setenv(domain.EnvVarGitHubServerUrl, "https://github.com")
+	os.Setenv(domain.EnvVarGitHubRepository, "Rindrics/execute-scripts-github-flow")
 	os.Setenv(domain.EnvVarToken, "token")
 	os.Setenv(domain.EnvVarRequiredLabel, "test-label")
 	os.Setenv(domain.EnvVarBaseBranch, "main")
@@ -27,7 +28,8 @@ func TestMainValid(t *testing.T) {
 	app := application.New(
 		config,
 		infrastructure.EventParser{
-			os.Getenv(domain.EnvVarGitHubRepositoryUrl),
+			os.Getenv(domain.EnvVarGitHubServerUrl) + "/" +
+				os.Getenv(domain.EnvVarGitHubRepository) + ".git",
 			config.Token,
 			logger,
 		},
@@ -60,6 +62,8 @@ func TestMainValid(t *testing.T) {
 	}
 
 	os.Unsetenv(domain.EnvVarGitHubEventPath)
+	os.Unsetenv(domain.EnvVarGitHubServerUrl)
+	os.Unsetenv(domain.EnvVarGitHubRepository)
 	os.Unsetenv(domain.EnvVarRequiredLabel)
 	os.Unsetenv(domain.EnvVarBaseBranch)
 	os.Unsetenv(domain.EnvVarTargetScriptListDir)
@@ -67,7 +71,8 @@ func TestMainValid(t *testing.T) {
 
 func TestMainInvalidEvent(t *testing.T) {
 	os.Setenv(domain.EnvVarGitHubEventPath, "./infrastructure/pull_request_opened.json")
-	os.Setenv(domain.EnvVarGitHubRepositoryUrl, "https://github.com/Rindrics/execute-scripts-github-flow.git")
+	os.Setenv(domain.EnvVarGitHubServerUrl, "https://github.com")
+	os.Setenv(domain.EnvVarGitHubRepository, "Rindrics/execute-scripts-github-flow")
 	os.Setenv(domain.EnvVarToken, "token")
 	os.Setenv(domain.EnvVarRequiredLabel, "test-label")
 	os.Setenv(domain.EnvVarBaseBranch, "main")
@@ -78,7 +83,8 @@ func TestMainInvalidEvent(t *testing.T) {
 	app := application.New(
 		config,
 		infrastructure.EventParser{
-			os.Getenv(domain.EnvVarGitHubRepositoryUrl),
+			os.Getenv(domain.EnvVarGitHubServerUrl) + "/" +
+				os.Getenv(domain.EnvVarGitHubRepository) + ".git",
 			config.Token,
 			logger,
 		},
@@ -99,6 +105,8 @@ func TestMainInvalidEvent(t *testing.T) {
 	assert.False(t, app.IsValid(event))
 
 	os.Unsetenv(domain.EnvVarGitHubEventPath)
+	os.Unsetenv(domain.EnvVarGitHubServerUrl)
+	os.Unsetenv(domain.EnvVarGitHubRepository)
 	os.Unsetenv(domain.EnvVarRequiredLabel)
 	os.Unsetenv(domain.EnvVarBaseBranch)
 	os.Unsetenv(domain.EnvVarTargetScriptListDir)
