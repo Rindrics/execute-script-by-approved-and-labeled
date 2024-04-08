@@ -5,6 +5,7 @@ import (
 )
 
 type Config struct {
+	Token               string
 	RequiredLabel       string
 	BaseBranch          string
 	TargetScriptListDir string
