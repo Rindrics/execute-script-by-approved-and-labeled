@@ -89,7 +89,7 @@ func (e EventParser) ParseTargetScripts(pe domain.ParsedEvent, tslPath string) (
 
 func getGitDiff(url, token, base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
 	logger.Info("infrastructure.getGitDiff", "cloning", url)
-	dir, err := os.MkdirTemp("", "clone-example")
+	dir, err := os.MkdirTemp("", "tempdir")
 	if err != nil {
 		log.Fatal(err)
 	}
