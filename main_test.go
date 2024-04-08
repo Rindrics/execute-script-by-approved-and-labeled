@@ -12,6 +12,7 @@ import (
 
 func TestMainValid(t *testing.T) {
 	os.Setenv(domain.EnvVarGitHubEventPath, "./infrastructure/pull_request.json")
+	os.Setenv(domain.EnvVarGitHubRepositoryUrl, "https://github.com/Rindrics/execute-scripts-github-flow.git")
 	os.Setenv(domain.EnvVarRequiredLabel, "test-label")
 	os.Setenv(domain.EnvVarBaseBranch, "main")
 	os.Setenv(domain.EnvVarTargetScriptListDir, "infrastructure/assets")
@@ -22,7 +23,7 @@ func TestMainValid(t *testing.T) {
 	}
 
 	logger := infrastructure.NewLogger()
-	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
+	app := application.New(config, infrastructure.EventParser{os.Getenv(domain.EnvVarGitHubRepositoryUrl), logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()
@@ -55,13 +56,14 @@ func TestMainValid(t *testing.T) {
 
 func TestMainInvalidEvent(t *testing.T) {
 	os.Setenv(domain.EnvVarGitHubEventPath, "./infrastructure/pull_request_opened.json")
+	os.Setenv(domain.EnvVarGitHubRepositoryUrl, "https://github.com/Rindrics/execute-scripts-github-flow.git")
 	os.Setenv(domain.EnvVarRequiredLabel, "test-label")
 	os.Setenv(domain.EnvVarBaseBranch, "main")
 	os.Setenv(domain.EnvVarTargetScriptListDir, "infrastructure/assets")
 
 	logger := infrastructure.NewLogger()
 	config, err := infrastructure.LoadConfig()
-	app := application.New(config, infrastructure.EventParser{logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
+	app := application.New(config, infrastructure.EventParser{os.Getenv(domain.EnvVarGitHubRepositoryUrl), logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
 	logger.Debug("main.TestMainValidEvent", "app:", app)
 
 	event, err := app.ParseEvent()
