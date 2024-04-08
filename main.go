@@ -24,7 +24,18 @@ func main() {
 	}
 	// TODO: remove EventParser from argument
 
-	app := application.New(config, infrastructure.EventParser{os.Getenv(domain.EnvVarGitHubRepositoryUrl), config.Token, logger}, &infrastructure.TargetScriptListValidator{logger}, &infrastructure.ParsedEventValidator{logger, *config}, logger)
+	app := application.New(
+		config,
+		infrastructure.EventParser{
+			os.Getenv(domain.EnvVarGitHubServerUrl) + "/" +
+				os.Getenv(domain.EnvVarGitHubRepository) + ".git",
+			config.Token,
+			logger,
+		},
+		&infrastructure.TargetScriptListValidator{logger},
+		&infrastructure.ParsedEventValidator{logger, *config},
+		logger,
+	)
 	logger.Debug("main", "app:", app)
 
 	event, err := app.ParseEvent()

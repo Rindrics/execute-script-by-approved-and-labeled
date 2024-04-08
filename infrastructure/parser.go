@@ -89,15 +89,15 @@ func (e EventParser) ParseTargetScripts(pe domain.ParsedEvent, tslPath string) (
 
 func getGitDiff(url, token, base, head, targetFile string, logger *slog.Logger) (*diffparser.Diff, error) {
 	logger.Info("infrastructure.getGitDiff", "cloning", url)
-	dir, err := os.MkdirTemp("", "clone-example")
+	dir, err := os.MkdirTemp("", "tempdir")
 	if err != nil {
-		log.Fatal(err)
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
 	}
 
 	defer os.RemoveAll(dir)
 
 	repo, err := git.PlainClone(dir, false, &git.CloneOptions{
-		URL: "https://github.com/git-fixtures/basic.git",
+		URL: url,
 		Auth: &http.BasicAuth{
 			Username: "execute-script-with-merge",
 			Password: token,
