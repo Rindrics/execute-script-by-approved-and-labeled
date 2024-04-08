@@ -98,7 +98,7 @@ func getGitDiff(url, base, head, targetFile string, logger *slog.Logger) (*diffp
 	repo, err := git.PlainClone(dir, false, &git.CloneOptions{
 		URL: "https://github.com/git-fixtures/basic.git",
 		Auth: &http.BasicAuth{
-			Username: "abc123", // anything except an empty string
+			Username: "execute-script-with-merge",
 			Password: "github_access_token",
 		},
 	})
