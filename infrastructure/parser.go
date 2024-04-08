@@ -112,6 +112,18 @@ func getGitDiff(url, token, base, head, targetFile string, logger *slog.Logger) 
 	}
 	logger.Debug("infrastructure.getGitDiff", "output", output)
 
+	output, err = ExecuteCommandWithLogging(logger, "ls", "-al")
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
+	}
+	logger.Debug("infrastructure.getGitDiff", "output", output)
+
+	output, err = ExecuteCommandWithLogging(logger, "cd", "tempdir", "&&", "git", "branch")
+	if err != nil {
+		logger.Error("infrastructure.getGitDiff", "failed with", err)
+	}
+	logger.Debug("infrastructure.getGitDiff", "output", output)
+
 	branches, err := repo.Branches()
 	if err != nil {
 		logger.Error("infrastructure.getGitDiff", "repo.Branches() fails with:", err)
