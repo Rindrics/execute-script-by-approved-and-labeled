@@ -97,7 +97,7 @@ func getGitDiff(url, token, base, head, targetFile string, logger *slog.Logger) 
 	defer os.RemoveAll(dir)
 
 	repo, err := git.PlainClone(dir, false, &git.CloneOptions{
-		URL: "https://github.com/git-fixtures/basic.git",
+		URL: url,
 		Auth: &http.BasicAuth{
 			Username: "execute-script-with-merge",
 			Password: token,
