@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.13](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.12...v0.0.13) - 2024-04-08
+- Debugging by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/53
+
 ## [v0.0.12](https://github.com/Rindrics/execute-scripts-github-flow/compare/v0.0.11...v0.0.12) - 2024-04-08
 - Correct name of envvar for repo URL by @Rindrics in https://github.com/Rindrics/execute-scripts-github-flow/pull/51
 
